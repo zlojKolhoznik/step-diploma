@@ -8,17 +8,20 @@ public class Category
     [Key]
     public int Id { get; set; }
     
+    [ForeignKey(nameof(Parent))]
     public int? ParentId { get; set; }
 
-    [ForeignKey(nameof(ParentId))]
     public Category? Parent { get; set; }
 
     public Category[]? Children { get; set; }
 
+    public Product[]? Products { get; set; }
+
+    [MaxLength(50)]
     public string Name { get; set; }
     
+    [MaxLength(50)]
     public string NormalizedName { get; set; }
     
-    // TODO: Ask how to implement custom filters for each category.
-    // public Filters { get; set; }
+    public List<PropertyDeclaration> Properties { get; set; }
 }
