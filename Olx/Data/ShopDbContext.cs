@@ -7,11 +7,11 @@ public class ShopDbContext : DbContext
 {
     public DbSet<Category> Categories { get; set; }
     
-    public DbSet<PropertyDeclaration> PropertyDeclarations { get; set; }
+    public DbSet<FilterDeclaration> FilterDeclarations { get; set; }
     
     public DbSet<Product> Products { get; set; }
     
-    public DbSet<PropertyValue> PropertyValues { get; set; }
+    public DbSet<FilterValue> FilterValues { get; set; }
     
     public DbSet<User> Users { get; set; }
     
@@ -27,8 +27,8 @@ public class ShopDbContext : DbContext
             v => v.Split(',', StringSplitOptions.RemoveEmptyEntries)
         );
 
-        modelBuilder.Entity<PropertyValue>().HasOne<PropertyDeclaration>(pv => pv.PropertyDeclaration)
-            .WithMany(pd => pd.PropertyValues)
+        modelBuilder.Entity<FilterValue>().HasOne<FilterDeclaration>(pv => pv.FilterDeclaration)
+            .WithMany(pd => pd.FilterValues)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Category>().HasIndex(c => c.NormalizedName).IsUnique();

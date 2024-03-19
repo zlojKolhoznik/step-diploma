@@ -1,0 +1,123 @@
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Olx.Models.Category
+
+@{
+    ViewData["Title"] = "Edit";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    IEnumerable<SelectListItem> GetFilterTypeSelectList(IEnumerable<SelectListItem> filterTypes, int selectedType)
+    {
+        foreach (var item in filterTypes)
+        {
+            yield return new SelectListItem(item.Text, item.Value, item.Value == selectedType.ToString());
+        }
+    }
+}
+
+<h1>Edit</h1>
+
+<h4>Category</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="ParentId" class="form-label"></label>
+                <select asp-for="ParentId" class="form-control" asp-items="ViewBag.Categories"></select>
+                <span asp-validation-for="ParentId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="NormalizedName" class="form-label"></label>
+                <input asp-for="NormalizedName" class="form-control" readonly="readonly" />
+                <span asp-validation-for="NormalizedName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <span class="fw-bold mb-1">Filters</span>
+                @foreach (var filter in Model.Filters)
+                {
+                    <div class="row justify-content-between @(Model.Filters.IndexOf(filter) % 2 == 0 ? "bg-secondary bg-opacity-25" : "") p-1">
+                        <div class="col-6">
+                            <input class="form-control" type="text" placeholder="Filter name..." name="filters[]" value="@filter.Name"/>
+                        </div>
+                        <div class="col-4">
+                            <select class="form-select col-4" name="types[]" asp-items="@GetFilterTypeSelectList((ViewBag.FilterTypes as IEnumerable<SelectListItem>)!, (int)filter.FilterType)"></select>
+                        </div>
+                        <div class="col-2">
+                            @if (Model.Filters.Count == 1)
+                            {
+                                <button removeFilter disabled class="btn btn-outline-danger p-1"><i class="bi bi-trash3"></i></button>
+                            }
+                            else
+                            {
+                                <button removeFilter class="btn btn-outline-danger p-1"><i class="bi bi-trash3"></i></button>
+                            }
+                        </div>
+                        <input type="hidden" name="filterIds[]" value="@filter.Id" />
+                    </div>
+                }
+                <button class="btn btn-outline-secondary p-1 my-2" id="addFilter"><i class="bi bi-plus"></i> Add new filter</button>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('#addFilter').on('click', e => {
+                e.preventDefault();
+                let filters = $('input[name="filters[]"]');
+                let lastFilter = filters.last();
+                if (lastFilter.val().length > 0) {
+                    let newRow = `<div class="row justify-content-between ${filters.length % 2 === 0 ? 'bg-secondary bg-opacity-25' : ''} p-1">
+                                      <div class="col-6">
+                                        <input class="form-control" type="text" placeholder="Filter name..." name="filters[]"/>
+                                      </div>
+                                      <div class="col-4">
+                                          <select class="form-select col-4" name="types[]">
+                                                @foreach (var type in (ViewData["FilterTypes"] as IEnumerable<SelectListItem>)!)
+                                                {
+                                                    <option value="@type.Value">@type.Text</option>
+                                                }                                  
+                                          </select>
+                                      </div>
+                                      <div class="col-2">
+                                          <button removeFilter class="btn btn-outline-danger p-1"><i class="bi bi-trash3"></i></button>
+                                      </div>                                  
+                                  </div>`;
+                                            
+                    $('#addFilter').before(newRow);
+                    $('button[removeFilter]').prop('disabled', false);
+                }
+            });
+          
+            $('form').on('click', 'button[removeFilter]', removeFilterRow);
+        });
+        
+        function removeFilterRow(e) {
+                    e.preventDefault();
+                    if ($('input[name="filters[]"]').length > 1){
+                        $(e.target).closest('.row').remove();
+                    }
+                    if ($('input[name="filters[]"]').length <= 1){
+                        $('button[removeFilter]').prop('disabled', true);
+                    }
+                }
+        </script>
+}
+

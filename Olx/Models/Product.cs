@@ -44,5 +44,5 @@ public class Product
 
     public string ContactPhoneNumber { get; set; }
 
-    public List<PropertyValue> Properties { get; set; }
+    public List<FilterValue> Filters { get; set; }
 }

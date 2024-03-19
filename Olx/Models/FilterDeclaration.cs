@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Olx.Models;
 
-public class PropertyDeclaration
+public class FilterDeclaration
 {
     [Key]
     public int Id { get; set; }
@@ -16,7 +16,7 @@ public class PropertyDeclaration
 
     public Category Category { get; set; }
 
-    public PropertyType PropertyType { get; set; }
+    public FilterType FilterType { get; set; }
 
-    public List<PropertyValue> PropertyValues { get; set; }
+    public List<FilterValue> FilterValues { get; set; }
 }
