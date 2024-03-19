@@ -1,0 +1,105 @@
+@model Olx.Models.Category
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create</h1>
+
+<h4>Category</h4>
+<hr />
+<div class="row">
+    <div class="col-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-floating mb-3">
+                <select asp-for="ParentId" class="form-control" asp-items="ViewBag.Categories" placeholder="Select Parent">
+                    <option value="">None</option>
+                </select>
+                <label asp-for="ParentId" class="form-label"></label>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control"  placeholder="Name of category"/>
+                <label asp-for="Name" class="form-label"></label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="NormalizedName" class="form-control" placeholder="Normalized name"/>
+                <label asp-for="NormalizedName" class="form-label"></label>
+                <span class="text-secondary text-sm-start">This is a unique identifier of the category and you won't be able to change it in the future. Leave empty to calculate automatically</span>
+                <span asp-validation-for="NormalizedName" class="text-danger"></span>
+            </div>
+            <div class="form-group border-dark">
+                <span class="fw-bold mb-1">Filters</span>
+                <hr>
+                <div class="row justify-content-between bg-secondary bg-opacity-25 p-1">
+                    <div class="col-6">
+                        <input class="form-control" type="text" placeholder="Filter name..." name="filters[]"/>
+                    </div>
+                    <div class="col-4">
+                        <select class="form-select" name="types[]" asp-items="@(ViewData["FilterTypes"] as IEnumerable<SelectListItem>)"></select>
+                    </div>
+                    <div class="col-2">
+                        <button removeFilter disabled class="btn btn-outline-danger p-1"><i class="bi bi-trash3"></i></button>
+                    </div>
+                </div>
+                <button class="btn btn-outline-secondary p-1 my-2" id="addFilter"><i class="bi bi-plus"></i> Add new filter</button>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('#addFilter').on('click', e => {
+            e.preventDefault();
+            let filters = $('input[name="filters[]"]');
+            let lastFilter = filters.last();
+            if (lastFilter.val().length > 0) {
+                let newRow = `<div class="row justify-content-between ${filters.length % 2 === 0 ? 'bg-secondary bg-opacity-25' : ''} p-1">
+                                  <div class="col-6">
+                                    <input class="form-control" type="text" placeholder="Filter name..." name="filters[]"/>
+                                  </div>
+                                  <div class="col-4">
+                                      <select class="form-select col-4" name="types[]">
+                                            @foreach (var type in (ViewData["FilterTypes"] as IEnumerable<SelectListItem>)!)
+                                            {
+                                                <option value="@type.Value">@type.Text</option>
+                                            }                                  
+                                      </select>
+                                  </div>
+                                  <div class="col-2">
+                                      <button removeFilter class="btn btn-outline-danger p-1"><i class="bi bi-trash3"></i></button>
+                                  </div>                                  
+                              </div>`;
+                                        
+                $('#addFilter').before(newRow);
+                $('button[removeFilter]').prop('disabled', false);
+            }
+        });
+      
+        $('form').on('click', 'button[removeFilter]', removeFilterRow);
+    });
+    
+    function removeFilterRow(e) {
+                e.preventDefault();
+                if ($('input[name="filters[]"]').length > 1){
+                    $(e.target).closest('.row').remove();
+                }
+                if ($('input[name="filters[]"]').length <= 1){
+                    $('button[removeFilter]').prop('disabled', true);
+                }
+            }
+    </script>
+}
+

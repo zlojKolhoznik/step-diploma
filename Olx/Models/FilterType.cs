@@ -1,6 +1,6 @@
 ﻿namespace Olx.Models;
 
-public enum PropertyType
+public enum FilterType
 {
     String,
     Integer,
