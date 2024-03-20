@@ -31,5 +31,6 @@ public class ShopDbContext : IdentityDbContext<User>
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Category>().HasIndex(c => c.NormalizedName).IsUnique();
+        base.OnModelCreating(modelBuilder);
     }
 }
