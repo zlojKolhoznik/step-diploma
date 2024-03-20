@@ -1,7 +1,18 @@
-﻿namespace Olx.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Olx.Models;
 
 public class EnterpriseUser
 {
+    [Key]
+    public int Id { get; set; }
+    
+    [ForeignKey(nameof(User))]
+    public string UserId { get; set; }
+    
+    public User User { get; set; }
+    
     public string CompanyName { get; set; }
 
     public string StreetAddress { get; set; }
