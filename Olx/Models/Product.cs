@@ -24,9 +24,7 @@ public class Product
     public PriceType PriceType { get; set; }
 
     public double? Price { get; set; }
-
-    public SellerType SellerType { get; set; }
-
+    
     public ItemState ItemState { get; set; }
     
     public DateTime CreatedAt { get; set; }
@@ -41,8 +39,6 @@ public class Product
     public string OwnerId { get; set; }
     
     public User Owner { get; set; }
-
-    public string ContactPhoneNumber { get; set; }
-
+    
     public List<FilterValue> Filters { get; set; }
 }

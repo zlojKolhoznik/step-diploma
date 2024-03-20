@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Olx.Models;
 
 namespace Olx.Data;
 
-public class ShopDbContext : DbContext
+public class ShopDbContext : IdentityDbContext<User>
 {
     public DbSet<Category> Categories { get; set; }
     
@@ -12,8 +13,6 @@ public class ShopDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     
     public DbSet<FilterValue> FilterValues { get; set; }
-    
-    public DbSet<User> Users { get; set; }
     
     public ShopDbContext(DbContextOptions<ShopDbContext> options) : base(options)
     {
