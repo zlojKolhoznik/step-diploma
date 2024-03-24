@@ -32,8 +32,12 @@ public class Product
     public DateTime? UpdatedAt { get; set; }
 
     public bool IsAutorenewing { get; set; }
+    
+    public bool IsPromoted { get; set; }
 
-    public string City { get; set; } // This is a temporary solution. We will use either a separate table or some sort of API to get the city name.
+    public DateTime PromotionEnd { get; set; }
+
+    public string City { get; set; } // This is a temporary solution. We will use either a separate table or some sort of API to get the city name. (Нова пошта)
 
     [ForeignKey(nameof(Owner))]
     public string OwnerId { get; set; }
