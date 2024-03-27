@@ -29,7 +29,7 @@ namespace Olx.Controllers
         // GET: Product/Details/5 -- Details of a single product for admin panel
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
@@ -38,7 +38,7 @@ namespace Olx.Controllers
                 .Include(p => p.Category)
                 .Include(p => p.Owner)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            if (product is null)
             {
                 return NotFound();
             }
@@ -169,8 +169,9 @@ namespace Olx.Controllers
         {
             if (photos.Length == 0)
             {
-                ModelState.AddModelError("Photos", "At least one photo is required");
+                ModelState.AddModelError("PhotoUrls", "At least one photo is required");
             }
+            
             if (ModelState.IsValid)
             {
                 product.CreatedAt = DateTime.Now;
@@ -198,26 +199,29 @@ namespace Olx.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", product.OwnerId);
+            
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
+            ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
             return View(product);
         }
 
         // GET: Product/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
 
             var product = await _context.Products.FindAsync(id);
-            if (product == null)
+            if (product is null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", product.OwnerId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
+            ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
             return View(product);
         }
 
@@ -226,17 +230,59 @@ namespace Olx.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,CategoryId,PhotoUrls,PriceType,Price,ItemState,CreatedAt,UpdatedAt,IsAutorenewing,IsPromoted,PromotionEnd,City,OwnerId")] Product product)
+        public async Task<IActionResult> Edit(int id, Product product, string[] leftPhotos, string allPhotos, IFormFile[] photos, IFormCollection form)
         {
             if (id != product.Id)
             {
                 return NotFound();
+            }
+            
+            if (photos.Length + leftPhotos.Length == 0)
+            {
+                ModelState.AddModelError("PhotoUrls", "At least one photo is required");
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var filterValues = await _context.FilterValues
+                        .Include(fv => fv.FilterDeclaration)
+                        .Where(fv => fv.ProductId == product.Id)
+                        .ToListAsync();
+
+                    foreach (var filterValue in filterValues)
+                    {
+                        if (!form.TryGetValue(filterValue.FilterDeclaration.Name, out var value))
+                        {
+                            continue;
+                        }
+                        
+                        filterValue.Value = value.ToString();
+                        _context.Update(filterValue);
+                    }
+                    
+                    var allPhotoUrls = allPhotos.Split('\n');
+                    
+                    foreach (var toDelete in allPhotoUrls.Except(leftPhotos))
+                    {
+                        await _photoManager.DeletePhotoAsync(toDelete);
+                    }
+                    
+                    product.PhotoUrls = new string[photos.Length + leftPhotos.Length];
+                    
+                    for (int i = 0; i < leftPhotos.Length; i++)
+                    {
+                        product.PhotoUrls[i] = leftPhotos[i];
+                    }
+                    
+                    for (int i = 0; i < photos.Length; i++)
+                    {
+                        product.PhotoUrls[i + leftPhotos.Length] = await _photoManager.SavePhotoAsync(photos[i]);
+                    }
+                    
+                    product.UpdatedAt = DateTime.Now;
+                    
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
@@ -246,22 +292,21 @@ namespace Olx.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            ViewData["OwnerId"] = new SelectList(_context.Users, "Id", "Id", product.OwnerId);
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
+            ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
             return View(product);
         }
 
         // GET: Product/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            if (id is null)
             {
                 return NotFound();
             }
@@ -270,7 +315,7 @@ namespace Olx.Controllers
                 .Include(p => p.Category)
                 .Include(p => p.Owner)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
+            if (product is null)
             {
                 return NotFound();
             }
