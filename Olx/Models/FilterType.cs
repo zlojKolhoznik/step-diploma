@@ -3,7 +3,6 @@
 public enum FilterType
 {
     String,
-    Integer,
-    Decimal,
+    Number,
     Boolean
 }

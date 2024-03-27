@@ -7,7 +7,6 @@ public class User : IdentityUser
 {
     public string? Name { get; set; }
 
-    [ForeignKey(nameof(EnterpriseUser))]
     public int? EnterpriseUserId { get; set; }
     
     public EnterpriseUser? EnterpriseUser { get; set; }

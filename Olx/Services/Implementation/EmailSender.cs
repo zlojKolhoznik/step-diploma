@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using MimeKit;
 using Olx.Models;
 
-namespace Olx.Services;
+namespace Olx.Services.Implementation;
 
 public class EmailSender : IEmailSender
 {
