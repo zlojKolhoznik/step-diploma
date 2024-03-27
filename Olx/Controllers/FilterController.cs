@@ -16,7 +16,7 @@ namespace Olx.Controllers
         
         // GET: Filter/ByCategory/5
         // This is a API call, it returns a JSON object with all the properties of the category with the given id.
-        public IActionResult ByCategory(int? id)
+        public async Task<IActionResult> ByCategory(int? id)
         {
             if (id == null)
             {
@@ -24,26 +24,30 @@ namespace Olx.Controllers
             }
 
             var category = _context.Categories.Include(c => c.Filters)
-                .Include(c => c.Parent)
-                .Include(c => c.Children)
                 .FirstOrDefault(c => c.Id == id);
             if (category == null)
             {
                 return NotFound();
             }
 
-            return Json(GetProperties(category));
+            var filterDeclarations = await GetFiltersAsync(category);
+            foreach (var filterDeclaration in filterDeclarations)
+            {
+                filterDeclaration.Category = null;
+            }
+            return Json(filterDeclarations);
         }
         
-        private IEnumerable<FilterDeclaration> GetProperties(Category category)
+        private async Task<List<FilterDeclaration>> GetFiltersAsync(Category category)
         {
-            var properties = new List<FilterDeclaration>();
-            properties.AddRange(category.Filters);
-            if (category.Parent != null)
+            var filters = new List<FilterDeclaration>();
+            filters.AddRange(category.Filters);
+            var parent = await _context.Categories.Include(c => c.Filters).FirstOrDefaultAsync(c => c.Id == category.ParentId);
+            if (parent is not null)
             {
-                properties.AddRange(GetProperties(category.Parent));
+                filters.AddRange(await GetFiltersAsync(parent));
             }
-            return properties;
+            return filters.ToList();
         }
     }
 }
