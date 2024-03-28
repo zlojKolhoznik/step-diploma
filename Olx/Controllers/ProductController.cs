@@ -178,7 +178,8 @@ namespace Olx.Controllers
                 product.PhotoUrls = new string[photos.Length];
                 for (int i = 0; i < photos.Length; i++)
                 {
-                    product.PhotoUrls[i] = await _photoManager.SavePhotoAsync(photos[i]);
+                    string url = await _photoManager.SavePhotoAsync(photos[i]);
+                    product.PhotoUrls[i] ="/" + url.Replace("\\", "/");
                 }
 
                 var filterDeclarations = await GetFiltersByCategoryAsync(product.CategoryId);
@@ -214,7 +215,9 @@ namespace Olx.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products.FindAsync(id);
+            var product = await _context.Products.Include(p => p.Filters)
+                .ThenInclude(f => f.FilterDeclaration)
+                .FirstOrDefaultAsync(p => p.Id == id);
             if (product is null)
             {
                 return NotFound();
@@ -262,11 +265,11 @@ namespace Olx.Controllers
                         _context.Update(filterValue);
                     }
                     
-                    var allPhotoUrls = allPhotos.Split('\n');
+                    var allPhotoUrls = allPhotos.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
                     
                     foreach (var toDelete in allPhotoUrls.Except(leftPhotos))
                     {
-                        await _photoManager.DeletePhotoAsync(toDelete);
+                        await _photoManager.DeletePhotoAsync(toDelete[1..]);
                     }
                     
                     product.PhotoUrls = new string[photos.Length + leftPhotos.Length];
@@ -278,7 +281,8 @@ namespace Olx.Controllers
                     
                     for (int i = 0; i < photos.Length; i++)
                     {
-                        product.PhotoUrls[i + leftPhotos.Length] = await _photoManager.SavePhotoAsync(photos[i]);
+                        string url = await _photoManager.SavePhotoAsync(photos[i]);
+                        product.PhotoUrls[i + leftPhotos.Length] ="/" + url.Replace("\\", "/");
                     }
                     
                     product.UpdatedAt = DateTime.Now;

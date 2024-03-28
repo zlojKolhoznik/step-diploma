@@ -1,3 +1,4 @@
+@using Olx.Models
 @model Olx.Models.Product
 
 @{
@@ -10,11 +11,13 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="OwnerId">
             <input type="hidden" name="allPhotos" value="@string.Join('\n', Model.PhotoUrls)">
+            <input type="hidden" asp-for="CategoryId">
+            <input type="hidden" asp-for="CreatedAt">
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -27,7 +30,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId" disabled="disabled"></select>
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -95,7 +98,32 @@
                 <input asp-for="City" class="form-control" />
                 <span asp-validation-for="City" class="text-danger"></span>
             </div>
-            <div id="filters"></div>
+            <div id="filters">
+                @foreach (var filter in Model.Filters)
+                {
+                    <div class="form-group @(filter.FilterDeclaration.FilterType == FilterType.Boolean ? "form-check" : "")">
+                        @switch (filter.FilterDeclaration.FilterType)
+                        {
+                            case FilterType.Boolean:
+                                <label class="form-check-label">
+                                    <input class="form-check-input" type="checkbox" name="@filter.FilterDeclaration.Name" checked="@filter.Value" /> @filter.FilterDeclaration.Name
+                                </label>
+                            break;
+                            case FilterType.Number:
+                                <label class="form-label">@filter.FilterDeclaration.Name</label>
+                                <input class="form-control" name="@filter.FilterDeclaration.Name" value="@filter.Value" type="number" />
+                            break;
+                            case FilterType.String:
+                                <label class="form-label">@filter.FilterDeclaration.Name</label>
+                                <input class="form-control" name="@filter.FilterDeclaration.Name" value="@filter.Value" />
+                            break;
+                            default:
+                                <p class="text-danger">Unknown filter type: @filter.FilterDeclaration.FilterType</p>
+                            break;
+                        }
+                    </div>
+                }
+            </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
@@ -120,44 +148,6 @@
                     $('#Price').prev().text('');
                 }
             });
-            
-            $('#CategoryId').on('change', () => {
-                $.ajax({
-                    url: '/Filter/ByCategory/' + $('#CategoryId').val(),
-                    type: 'GET',
-                    success: data => {
-                        let filters = $('#filters');
-                        filters.empty();
-                        filters.append('<h4>Filters</h4>');
-                        if (data.length === 0) {
-                            filters.append('<p>No filters available for this category</p>');
-                        }
-                        $.each(data,  (index, value) => {
-                            filters.append('<div class="form-group"></div>');
-                            let formGroup = filters.children().last();
-                            if (value.filterType === 2) {
-                                formGroup.addClass('form-check');
-                                formGroup.append('<label class="form-check-label">' 
-                                + '<input class="form-check-input" type="checkbox" name="' + value.name + '" />' 
-                                + value.name + '</label>');
-                            } else {
-                                formGroup.append('<label class="form-label">' + value.name + '</label>');
-                                if (value.filterType === 0) {
-                                    formGroup.append('<input class="form-control" name="' + value.name + '" />');
-                                } else if (value.filterType === 1) {
-                                    formGroup.append('<input class="form-control" type="number" name="' + value.name + '" />');
-                                } else {
-                                    console.log('Unknown filter type: ' + value.filterType);
-                                }
-                            }
-                        })
-                    },
-                    error: function (msg) {
-                        console.log(msg);
-                    }
-                });
-            });
-            $('#CategoryId').trigger('change');
             $('.photo-input-container input[type="file"]').on('change', photoUploadHandler);
             $('.photo-input-container').on('click', (e) => {
                 $(e.target).children('input').trigger('click');

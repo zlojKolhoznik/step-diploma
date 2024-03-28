@@ -29,7 +29,7 @@ public class LocalFilesPhotoManager : IPhotoManager
 
     public async Task<Stream> GetPhotoAsync(string photoUrl)
     {
-        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", photoUrl);
+        string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", photoUrl[1..].Replace("/", "\\"));
         try
         {
             await using var fileStream = new FileStream(fullPath, FileMode.Open);
@@ -47,6 +47,7 @@ public class LocalFilesPhotoManager : IPhotoManager
 
     public Task DeletePhotoAsync(string photoUrl)
     {
+        var currentDirectory = Directory.GetCurrentDirectory();
         string fullPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", photoUrl);
         if (File.Exists(fullPath))
         {

@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-    </PropertyGroup>
+      <UserSecretsId>b8f258d8-8b86-4043-a01d-ecbed6056968</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="MailKit" Version="4.4.0" />
@@ -28,6 +29,7 @@
       <_ContentIncludedByDefault Remove="wwwroot\assets\photos\f04c9892-53ff-4073-986a-6ed4d7898925_image_2024-03-27_151452247.png" />
       <_ContentIncludedByDefault Remove="wwwroot\assets\photos\image_2024-03-27_151428045.png" />
       <_ContentIncludedByDefault Remove="wwwroot\assets\photos\image_2024-03-27_151452247.png" />
+      <_ContentIncludedByDefault Remove="Views\Authorization\Login.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
