@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Text.Encodings.Web;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -111,12 +112,28 @@ namespace Olx.Areas.Identity.Pages.Account
         {
             returnUrl ??= Url.Content("~/");
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+            
+            if (!IsValidEmail(Input.Email) && !IsValidPhone(Input.Email))
+            {
+                ModelState.AddModelError("Input.Email", "Invalid email or phone number.");
+            }
+            
             if (ModelState.IsValid)
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
-                await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                if (IsValidEmail(Input.Email))
+                {
+                    await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
+                    await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
+                }
+                else if (IsValidPhone(Input.Email))
+                {
+                    string phone = new string(Input.Email.Where(char.IsDigit).ToArray()); // remove all non-digit characters
+                    await _userStore.SetUserNameAsync(user, phone, CancellationToken.None);
+                    await _userManager.SetPhoneNumberAsync(user, phone);
+                }
+
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)
@@ -153,6 +170,24 @@ namespace Olx.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        private bool IsValidEmail(string inputEmail)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(inputEmail);
+                return addr.Address == inputEmail;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        
+        private bool IsValidPhone(string inputPhone)
+        {
+            return Regex.IsMatch(inputPhone, @"^\+?\d{1,3}\(?\d{3}?\)?(\d[\s-]*){7,}$") && inputPhone.Where(char.IsDigit).Count() >= 10;
         }
 
         private User CreateUser()
