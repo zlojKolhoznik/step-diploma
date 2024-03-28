@@ -1,10 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
-    </PropertyGroup>
+      <UserSecretsId>b8f258d8-8b86-4043-a01d-ecbed6056968</UserSecretsId>
+  </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="MailKit" Version="4.4.0" />
@@ -17,6 +18,22 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\assets\photos\21bb8a6e-b03e-415e-ad35-14b111d48e52_image_2024-03-27_151428045.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\photos\2fedc747-5740-4c06-a0af-183ef692f32b_image_2024-03-27_151452247.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\photos\4fb3c5c2-bd6d-4277-955a-f58eb6fa0e2f_image_2024-03-27_151428045.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\photos\995a8fbd-f307-4f19-b6f1-377262b7bc4a_image_2024-03-27_151452247.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\photos\a35ec7a5-3ada-4680-9961-1c6d84102a55_image_2024-03-27_151428045.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\photos\f04c9892-53ff-4073-986a-6ed4d7898925_image_2024-03-27_151452247.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\photos\image_2024-03-27_151428045.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\assets\photos\image_2024-03-27_151452247.png" />
+      <_ContentIncludedByDefault Remove="Views\Authorization\Login.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="wwwroot\assets\photos\" />
     </ItemGroup>
 
 </Project>
