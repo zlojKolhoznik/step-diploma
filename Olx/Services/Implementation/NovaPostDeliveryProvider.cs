@@ -5,13 +5,13 @@ using Olx.Services.Abstract;
 
 namespace Olx.Services.Implementation;
 
-public class NovaPostCityProvider : ICityProvider
+public class NovaPostDeliveryProvider : IDeliveryProvider
 {
     private readonly IConfiguration _configuration;
     private readonly string _apiKey;
     private readonly string _baseUrl;
 
-    public NovaPostCityProvider(IConfiguration configuration)
+    public NovaPostDeliveryProvider(IConfiguration configuration)
     {
         _configuration = configuration;
         _apiKey = _configuration["NovaPostApi:ApiKey"] ?? throw new ArgumentNullException("ApiKey is required");
@@ -145,5 +145,58 @@ public class NovaPostCityProvider : ICityProvider
         }
 
         return result.Data.First(a => a.Id == regionId);
+    }
+
+    public async Task<IEnumerable<Warehouse>> GetWarehousesByCityAsync(string cityId)
+    {
+        using var client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Get, _baseUrl);
+        request.Content = new StringContent(JsonConvert.SerializeObject(new
+        {
+            apiKey = _apiKey,
+            modelName = "Address",
+            calledMethod = "getWarehouses",
+            methodProperties = new
+            {
+                CityRef = cityId
+            }
+        }));
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        var response = await client.SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<NovaPostApiResponse<Warehouse>>(content);
+        if (!result?.Success ?? true)
+        {
+            throw new Exception("Failed to get warehouses");
+        }
+        
+        return result.Data;
+    }
+
+    public async Task<Warehouse> GetWarehouseByNumberAsync(string cityId, string warehouseId)
+    {
+        using var client = new HttpClient();
+        var request = new HttpRequestMessage(HttpMethod.Get, _baseUrl);
+        request.Content = new StringContent(JsonConvert.SerializeObject(new
+        {
+            apiKey = _apiKey,
+            modelName = "Address",
+            calledMethod = "getWarehouses",
+            methodProperties = new
+            {
+                CityRef = cityId,
+                WarehouseId = warehouseId
+            }
+        }));
+        request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+        var response = await client.SendAsync(request);
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<NovaPostApiResponse<Warehouse>>(content);
+        if (!result?.Success ?? true)
+        {
+            throw new Exception("Failed to get warehouses");
+        }
+        
+        return result.Data.First();
     }
 }
