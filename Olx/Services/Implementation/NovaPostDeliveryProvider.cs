@@ -41,7 +41,7 @@ public class NovaPostDeliveryProvider : IDeliveryProvider
         return result.Data;
     }
 
-    public async Task<IEnumerable<City>> GetCitiesByRegionAsync(string regionId, int page = 1)
+    public async Task<IEnumerable<City>> GetCitiesByRegionAsync(string regionId)
     {
         using var client = new HttpClient();
         var request = new HttpRequestMessage(HttpMethod.Get, _baseUrl);
@@ -52,8 +52,6 @@ public class NovaPostDeliveryProvider : IDeliveryProvider
             calledMethod = "getSettlements",
             methodProperties = new
             {
-                Page = page,
-                Warehouse = "0",
                 AreaRef = regionId
             }
         }));
@@ -69,7 +67,7 @@ public class NovaPostDeliveryProvider : IDeliveryProvider
         return result.Data;
     }
 
-    public async Task<IEnumerable<City>> GetCitiesAsync(int page, string? q = null)
+    public async Task<IEnumerable<City>> GetCitiesAsync(string? q = null)
     {
         using var client = new HttpClient();
         var request = new HttpRequestMessage(HttpMethod.Get, _baseUrl);
@@ -80,8 +78,6 @@ public class NovaPostDeliveryProvider : IDeliveryProvider
             calledMethod = "getSettlements",
             methodProperties = new
             {
-                Page = page,
-                Warehouse = "0",
                 FindByString = q
             }
         }));
@@ -108,7 +104,6 @@ public class NovaPostDeliveryProvider : IDeliveryProvider
             calledMethod = "getSettlements",
             methodProperties = new
             {
-                Warehouse = "0",
                 Ref = cityId
             }
         }));
@@ -173,7 +168,7 @@ public class NovaPostDeliveryProvider : IDeliveryProvider
         return result.Data;
     }
 
-    public async Task<Warehouse> GetWarehouseByNumberAsync(string cityId, string warehouseId)
+    public async Task<Warehouse> GetWarehouseByNumberAsync(string cityId, string q)
     {
         using var client = new HttpClient();
         var request = new HttpRequestMessage(HttpMethod.Get, _baseUrl);
@@ -185,7 +180,7 @@ public class NovaPostDeliveryProvider : IDeliveryProvider
             methodProperties = new
             {
                 CityRef = cityId,
-                WarehouseId = warehouseId
+                FindByString = q
             }
         }));
         request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");

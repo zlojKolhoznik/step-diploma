@@ -41,7 +41,8 @@ public class Product
 
     public DateTime? PromotionEnd { get; set; }
 
-    public string City { get; set; } // This is a temporary solution. We will use either a separate table or some sort of API to get the city name. (Нова пошта)
+    [Required(ErrorMessage = "Оберіть місто зі списку")]
+    public string City { get; set; } // City REF from Nova Poshta API
 
     [ForeignKey(nameof(Owner))]
     public string OwnerId { get; set; }

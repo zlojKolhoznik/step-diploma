@@ -157,7 +157,7 @@ namespace Olx.Controllers
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
             ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
-            return View();
+            return View(new Product());
         }
 
         // POST: Product/Create
