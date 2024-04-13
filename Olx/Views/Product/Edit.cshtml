@@ -18,6 +18,7 @@
             <input type="hidden" name="allPhotos" value="@string.Join('\n', Model.PhotoUrls)">
             <input type="hidden" asp-for="CategoryId">
             <input type="hidden" asp-for="CreatedAt">
+            <input type="hidden" asp-for="City">
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
                 <input asp-for="Name" class="form-control" />
@@ -78,7 +79,7 @@
                 <select asp-for="PriceType" class="form-control" asp-items="ViewBag.PriceType"></select>
                 <span asp-validation-for="PriceType" class="text-danger"></span>
             </div>
-            <div class="form-group">
+            <div class="form-group"  style="display: @(Model.PriceType == PriceType.Regular ? "block": "none")">
                 <label asp-for="Price" class="control-label"></label>
                 <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
@@ -95,8 +96,10 @@
             </div>
             <div class="form-group">
                 <label asp-for="City" class="control-label"></label>
-                <input asp-for="City" class="form-control" />
+                <input name="city-name" class="form-control" />
                 <span asp-validation-for="City" class="text-danger"></span>
+                <div class="suggestions">
+                                </div>
             </div>
             <div id="filters">
                 @foreach (var filter in Model.Filters)
@@ -137,6 +140,7 @@
 
 @section Scripts
 {
+    <script src="/js/product.js"></script>
     <script type="text/javascript">
         $(document).ready(() => {
             $('#PriceType').on('change', () => {
@@ -156,148 +160,16 @@
                 $(e.target).parent().trigger('click');
             });
             $('.delete-button').on('click', deletePhotoHandler);
+            $('.suggestion').on('click', suggestionClickHandler);
+            $('input[name="city-name"]').on('input', cityInputChanged);
+            if ($('input[name="City"]').val() !== '') {
+                getCityNameByRef($('input[name="City"]').val());
+            }
         });
-        
-        function deletePhotoHandler(e) {
-            e.preventDefault();
-            let container = $(e.target).parent().parent();
-            if (e.target.tagName === 'I') {
-                container = container.parent(); // if the button is clicked, the target is the icon, so we need to go one level up
-            }
-            let panel = container.parent();
-            container.remove();
-            let newPhotoContainer = $('<div class="photo-container"></div>');
-            newPhotoContainer.append('<input type="file" name="photos" accept="image/*"/>');
-            if (panel.children('.photo-input-container').length === 0) {
-                newPhotoContainer.removeClass('photo-container').addClass('photo-input-container');
-                newPhotoContainer.append('<img src="/assets/icons/free-icon-camera-7708970.png"/>');
-                newPhotoContainer.on('click', (e) => {
-                   $(e.target).children('input').trigger('click');
-               });
-               newPhotoContainer.children('img').on('click', (e) => {
-                   $(e.target).parent().trigger('click');
-               });
-               newPhotoContainer.children('input').on('change', photoUploadHandler);
-            } else {   
-                newPhotoContainer.append('<img src="/assets/icons/free-icon-gallery-964053.png"/>');
-            }
-            newPhotoContainer.append('<div class="delete-panel"><button class="delete-button"><i class="bi bi-trash3"></i></button></div>');
-            newPhotoContainer.children('.delete-panel').children('.delete-button').on('click', deletePhotoHandler);
-            panel.append(newPhotoContainer);
-        }
-        
-        function photoUploadHandler(e) {
-           let input = e.target;
-           for (let file of input.files){
-               let reader = new FileReader();
-               reader.onload = (e) => {
-                   let container = $(input).parent().next();
-                   let img = $(input).siblings('img');
-                   img.attr('src', e.target.result);
-                   img.attr('style', 'width: 98px; height: 98px; margin: 0; border-radius: 5px;');
-                   $(input).parent().removeClass('photo-input-container').addClass('photo-container has-photo');
-                   $(input).parent().on('click', null);
-                   $(input).siblings('img').on('click', null);
-                   container.removeClass('photo-container').addClass('photo-input-container');
-                   container.children('img').attr('src', '/assets/icons/free-icon-camera-7708970.png');
-                   container.on('click', (e) => {
-                       $(e.target).children('input').trigger('click');
-                   });
-                   container.children('img').on('click', (e) => {
-                       $(e.target).parent().trigger('click');
-                   });
-                   container.children('input').on('change', photoUploadHandler);
-               }
-               reader.readAsDataURL(file);
-           }
-       }
     </script>
 }
 
 @section Styles {
-    <style>
-        .photos-container {
-            max-width: 600px;
-            padding: 20px;
-        }
-        
-        .photo-input-container {
-            display: inline-block;
-            width: 100px;
-            height: 100px;
-            border: 2px dashed #ccc;
-            border-radius: 5px;
-            margin: 5px 10px;
-            position: relative;
-            cursor: pointer;
-            background-color: #b6effb;
-            text-align: center;
-        }
-        
-        .photo-input-container img{
-            width: 96px;
-            height: 96px;
-            margin: 0;
-        }
-        
-         .photo-container img{
-            width: 98px;
-            height: 98px;
-            margin: 0;
-        }
-        
-        .photo-input-container:hover {
-            background-color: #a3e4f4;
-        }
-        
-        .photo-input-container input, .photo-container input{
-            display: none;
-        }
-        
-        .photo-container {
-            display: inline-block;
-            width: 100px;
-            height: 100px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            margin: 5px 10px;
-            position: relative;
-            background-color: #ddd;
-            text-align: center;
-        }
-        
-        .delete-panel {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background-color: rgba(175, 175, 175, 0.7);
-            padding: 5px;
-            display: none;
-            height: inherit;
-            width: inherit;
-            border-radius: inherit;
-        }
-        
-        .delete-button {
-            background-color: red;
-            color: white;
-            border: none;
-            padding: 5px;
-            cursor: pointer;
-            position: absolute;
-            top: 0;
-            right: 0;
-            border-radius: 0 0 0 5px;
-        }
-        
-        .delete-button:hover {
-            background-color: darkred;
-            cursor: pointer;
-        }
-        
-        .photo-container.has-photo:hover .delete-panel {
-            display: block;
-        }
-    </style>
+    <link rel="stylesheet" href="/css/product.css"/>
 }
 

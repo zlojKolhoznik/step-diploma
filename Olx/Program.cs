@@ -20,6 +20,7 @@ builder.Services.ConfigureIdentity();
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IPhotoManager, LocalFilesPhotoManager>();
+builder.Services.AddTransient<IDeliveryProvider, NovaPostDeliveryProvider>();
 
 var app = builder.Build();
 
