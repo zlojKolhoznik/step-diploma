@@ -52,4 +52,6 @@ public class Product
     
     [ValidateNever]
     public List<FilterValue> Filters { get; set; }
+
+    public List<Message> Messages { get; set; }
 }
