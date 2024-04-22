@@ -1,8 +1,6 @@
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Olx.Data;
-using Olx.Models;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Olx.Extensions;
 using Olx.Hubs;
@@ -20,6 +18,17 @@ builder.Services.AddDbContext<ShopDbContext>(options => options.UseSqlServer(bui
 
 builder.Services.AddIdentity();
 builder.Services.ConfigureIdentity();
+builder.Services.AddAuthentication().AddGoogle(googleOptions =>
+{
+    IConfigurationSection googleAuthNSection = builder.Configuration.GetSection("Authentication:Google");
+    googleOptions.ClientId = googleAuthNSection["ClientId"];
+    googleOptions.ClientSecret = googleAuthNSection["ClientSecret"];
+}).AddFacebook(facebookOptions =>
+{
+    IConfigurationSection facebookAuthNSection = builder.Configuration.GetSection("Authentication:Facebook");
+    facebookOptions.AppId = facebookAuthNSection["ClientId"];
+    facebookOptions.AppSecret = facebookAuthNSection["ClientSecret"];
+});
 
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IPhotoManager, LocalFilesPhotoManager>();
