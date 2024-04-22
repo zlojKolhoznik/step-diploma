@@ -12,8 +12,8 @@ using Olx.Data;
 namespace Olx.Migrations
 {
     [DbContext(typeof(ShopDbContext))]
-    [Migration("20240415094539_Messages")]
-    partial class Messages
+    [Migration("20240422103659_Messaging")]
+    partial class Messaging
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -317,10 +317,6 @@ namespace Olx.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("BuyerId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -336,6 +332,10 @@ namespace Olx.Migrations
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("SenderId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -345,9 +345,9 @@ namespace Olx.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BuyerId");
-
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ReceiverId");
 
                     b.HasIndex("SenderId");
 
@@ -594,16 +594,16 @@ namespace Olx.Migrations
 
             modelBuilder.Entity("Olx.Models.Message", b =>
                 {
-                    b.HasOne("Olx.Models.User", "Buyer")
-                        .WithMany()
-                        .HasForeignKey("BuyerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Olx.Models.Product", "Product")
                         .WithMany("Messages")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("Olx.Models.User", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Olx.Models.User", "Sender")
@@ -612,9 +612,9 @@ namespace Olx.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.Navigation("Buyer");
-
                     b.Navigation("Product");
+
+                    b.Navigation("Receiver");
 
                     b.Navigation("Sender");
                 });

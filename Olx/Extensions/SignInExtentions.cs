@@ -8,7 +8,8 @@ public static class SignInExtentions
 {
     public static IdentityBuilder AddIdentity(this IServiceCollection services)
     {
-        return services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ShopDbContext>();
+        return services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<ShopDbContext>();
     }
     
     public static IServiceCollection ConfigureIdentity(this IServiceCollection services)

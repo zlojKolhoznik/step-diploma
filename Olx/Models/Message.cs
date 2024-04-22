@@ -15,9 +15,9 @@ public class Message
     
     public Product Product { get; set; }
     
-    public string BuyerId { get; set; }
+    public string ReceiverId { get; set; }
     
-    public User Buyer { get; set; }
+    public User Receiver { get; set; }
     
     public string SenderId { get; set; }
     

@@ -343,6 +343,28 @@ namespace Olx.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        // GET: Product/5
+        // Product details for users placeholder
+        [Route("Product/{id:int:min(1)}")]
+        public async Task<IActionResult> UserView(int? id)
+        {
+            if (id is null)
+            {
+                return NotFound();
+            }
+            
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Owner)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (product is null)
+            {
+                return NotFound();
+            }
+            
+            return View(product);
+        }
+
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);

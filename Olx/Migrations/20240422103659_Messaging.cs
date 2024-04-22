@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Olx.Migrations
 {
     /// <inheritdoc />
-    public partial class Messages : Migration
+    public partial class Messaging : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -20,7 +20,7 @@ namespace Olx.Migrations
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ImageUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProductId = table.Column<int>(type: "int", nullable: false),
-                    BuyerId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ReceiverId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     SenderId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     IsRead = table.Column<bool>(type: "bit", nullable: false),
                     IsDelivered = table.Column<bool>(type: "bit", nullable: false),
@@ -30,8 +30,8 @@ namespace Olx.Migrations
                 {
                     table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Messages_AspNetUsers_BuyerId",
-                        column: x => x.BuyerId,
+                        name: "FK_Messages_AspNetUsers_ReceiverId",
+                        column: x => x.ReceiverId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -48,14 +48,14 @@ namespace Olx.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_BuyerId",
-                table: "Messages",
-                column: "BuyerId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Messages_ProductId",
                 table: "Messages",
                 column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Messages_ReceiverId",
+                table: "Messages",
+                column: "ReceiverId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_SenderId",
