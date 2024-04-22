@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -340,6 +341,28 @@ namespace Olx.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Product/5
+        // Product details for users placeholder
+        [Route("Product/{id:int:min(1)}")]
+        public async Task<IActionResult> UserView(int? id)
+        {
+            if (id is null)
+            {
+                return NotFound();
+            }
+            
+            var product = await _context.Products
+                .Include(p => p.Category)
+                .Include(p => p.Owner)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (product is null)
+            {
+                return NotFound();
+            }
+            
+            return View(product);
         }
 
         private bool ProductExists(int id)

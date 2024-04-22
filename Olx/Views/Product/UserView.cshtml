@@ -1,0 +1,10 @@
+﻿@model Olx.Models.Product
+
+@{
+    ViewBag.Title = $"{@Model.Name}";
+    Layout = "_Layout";
+}
+
+<h2>@Model.Name</h2>
+<!-- when we will do frontend we will add the rest of the product details here, but now this is only for chat testing -->
+<a asp-controller="Chats" asp-action="Chat" asp-route-id="@Model.Id" class="btn btn-primary">Chat</a>

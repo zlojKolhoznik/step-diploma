@@ -1,0 +1,50 @@
+﻿@using Olx.Models
+@model IEnumerable<IGrouping<int, Olx.Models.Message>>
+
+@{
+    ViewBag.Title = "Chats";
+    Layout = "_Layout";
+    var products = (ViewBag.Products as List<Product>)!;
+}
+
+<h2>@ViewBag.Title</h2>
+@if (products.Count == 0)
+{
+    <p>No chats found.</p>
+}
+else
+{
+    foreach (var product in products)
+    {
+        var lastMessage = Model.FirstOrDefault(kvp => kvp.Key == product.Id)
+            ?.Select(m => m).OrderBy(m => m.CreatedAt).Last();
+
+        if (lastMessage is not null)
+        {
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">@product.Name</h5>
+                        </div>
+                        <div class="card-body">
+                            <img class="card-img" src="@product.PhotoUrls.First()" alt="@product.Name">
+                            <span class="card-text">@lastMessage.Text</span>
+                            <span>
+                                @if (lastMessage.IsRead)
+                                {
+                                    <i class="bi bi-check-all" style="color: #a52834"></i>
+                                }
+                                else
+                                {
+                                    <i class="bi bi-check-all" style="color: #41464b"></i>
+                                }
+                            </span>
+                            <a asp-action="Chat" asp-route-id="@product.Id" class="btn btn-outline-primary"><i class="bi bi-chat-left-text"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}

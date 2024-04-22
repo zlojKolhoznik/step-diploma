@@ -14,6 +14,8 @@ public class ShopDbContext : IdentityDbContext<User>
     
     public DbSet<FilterValue> FilterValues { get; set; }
     
+    public DbSet<Message> Messages { get; set; }
+    
     public ShopDbContext(DbContextOptions<ShopDbContext> options) : base(options)
     {
         
@@ -28,6 +30,14 @@ public class ShopDbContext : IdentityDbContext<User>
 
         modelBuilder.Entity<FilterValue>().HasOne<FilterDeclaration>(pv => pv.FilterDeclaration)
             .WithMany(pd => pd.FilterValues)
+            .OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<Message>().HasOne<User>(m => m.Sender)
+            .WithMany(u => u.Messages)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<Message>().HasOne<Product>(m => m.Product)
+            .WithMany(p => p.Messages)
             .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<Category>().HasIndex(c => c.NormalizedName).IsUnique();

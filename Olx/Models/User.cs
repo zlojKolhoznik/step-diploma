@@ -10,4 +10,6 @@ public class User : IdentityUser
     public int? EnterpriseUserId { get; set; }
     
     public EnterpriseUser? EnterpriseUser { get; set; }
+    
+    public List<Message> Messages { get; set; }
 }
