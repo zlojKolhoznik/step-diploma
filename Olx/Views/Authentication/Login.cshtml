@@ -1,0 +1,114 @@
+﻿@model Olx.ViewModels.LoginViewModel
+@{
+    Layout = "_Authentication";
+    ViewData["Title"] = "Log in";
+}
+
+<form class="auth-form">
+    <div class="row justify-content-between align-items-center">
+        <div class="form-title col-4">Вхід</div>
+        <div class="logo col-8">
+            <a asp-action="Index" asp-controller="Home">
+                <img src="~/assets/icons/logo.png" alt="logo">
+            </a>
+        </div>
+    </div>
+    <div class="form-subtitle mt-4 mb-3">Введіть свої дані для входу</div>
+    <div class="form-group mb-3">
+        <div class="input-wrapper">
+            <label asp-for="Username" class="label"></label>
+            <input asp-for="Username"/>
+            <button id="eraseEmail"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <span asp-validation-for="Username" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <div class="input-wrapper">
+            <label asp-for="Password" class="label"></label>
+            <input asp-for="Password" type="password"/>
+            <button id="showPassword"><img src="~/assets/icons/eye-crossed.svg"/></button>
+        </div>
+        <span asp-validation-for="Password"></span>
+    </div>
+    <div class="form-group mb-3">
+        <div class="d-flex justify-content-between">
+            <div class="checkbox-group">
+                <input asp-for="IsPersistent"/>
+                <span class="checkmark"></span>
+                <label asp-for="IsPersistent">Запам'ятайте мене</label>
+            </div>
+            <div class="forgot-password">
+                <a asp-page="/Authentication/ForgotPassword">Забули пароль?</a>
+            </div>
+        </div>
+    </div>
+    <div class="form-group mb-3">
+        <button type="submit" class="submit-button">Продовжити</button>
+    </div>
+</form>
+<div class="separator mb-3">
+    <hr>
+    <span>Увійти за допомогою</span>
+    <hr>
+</div>
+<form id="externalLogin" asp-action="ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="mb-3">
+    <div class="d-flex justify-content-around">
+        <button type="submit" class="social-button facebook" name="provider" value="Facebook">
+            <svg width="12" height="21" viewBox="0 0 12 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.56283 20.4988V11.749H0V8.12835H3.56283V5.37274C3.56283 2.23253 5.65564 0.5 8.85938 0.5C10.3953 0.5 12 0.745192 12 0.745192V3.82815H10.2312C8.48907 3.82815 7.94483 4.79274 7.94483 5.78222V8.13209H11.8359L11.2145 11.7515H7.94483V20.5L6.00886 20.4988H3.56283Z" fill="currentColor"/>
+            </svg>
+
+        </button>
+        <button type="submit" class="social-button twitter" name="provider" value="Twitter">
+            <svg width="24" height="21" viewBox="0 0 24 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21.173 3.65358C22.2015 3.02278 22.971 2.02951 23.338 0.859238C22.3715 1.44754 21.3141 1.86195 20.2115 2.08456C18.6828 0.425524 16.2607 0.0217906 14.2986 1.09895C12.3365 2.17612 11.3202 4.4675 11.8176 6.69275C7.85881 6.48885 4.17053 4.57041 1.67052 1.41481C0.365817 3.72352 1.03255 6.67484 3.19419 8.15936C2.41252 8.13358 1.64818 7.91646 0.964911 7.52611C0.964911 7.54729 0.964911 7.56848 0.964911 7.58967C0.965363 9.99458 2.6175 12.0661 4.91519 12.5427C4.19015 12.7451 3.42963 12.7749 2.69165 12.6298C3.33783 14.6865 5.18545 16.0954 7.29133 16.1375C5.54718 17.5419 3.39322 18.3035 1.17602 18.2997C0.783024 18.3003 0.390336 18.2771 0 18.2303C2.25152 19.7146 4.87202 20.5024 7.54833 20.4997C11.2717 20.5259 14.85 19.02 17.4828 16.3188C20.1156 13.6175 21.5832 9.94643 21.5573 6.12658C21.5573 5.90765 21.5523 5.68989 21.5424 5.47331C22.5067 4.75837 23.3389 3.87269 24 2.85789C23.1017 3.2664 22.1487 3.53461 21.173 3.65358Z" fill="currentColor"/>
+            </svg>
+
+        </button>
+        <button type="submit" class="social-button google" name="provider" value="Google">
+            <svg width="20" height="21" viewBox="0 0 20 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.2326 8.67565V12.5406H15.7204C15.2096 14.9966 13.0715 16.4077 10.2326 16.4077C6.92589 16.3632 4.26915 13.7291 4.26915 10.495C4.26915 7.26091 6.92589 4.62677 10.2326 4.58227C11.6071 4.58066 12.9392 5.04712 14.0003 5.90156L16.9778 2.98971C13.5624 0.0532993 8.57435 -0.324382 4.73742 2.0629C0.900492 4.45017 -0.863214 9.02867 0.40936 13.2983C1.68193 17.568 5.68495 20.5027 10.2326 20.5C15.3482 20.5 20 16.8613 20 10.4944C19.9921 9.88143 19.9153 9.27112 19.771 8.67453L10.2326 8.67565Z" fill="currentColor"/>
+            </svg>
+
+        </button>
+    </div>
+</form>
+
+<div class="redirect-container text-center mb-3">
+    <span>Новий користувач?</span>
+    <a asp-action="Register">Зареєструйтесь</a>
+</div>
+
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(e => {
+            $('#eraseEmail').click(e => {
+                e.preventDefault();
+                $('#Username').val('');
+            });
+            $('#showPassword').click(e => e.preventDefault());
+            $('#showPassword').on('mousedown', e =>{
+                $('#Password').attr('type', 'text');
+                let target = e.target;
+                if (e.target.tagName === 'BUTTON') {
+                    target = e.target.firstElementChild;
+                }
+                if (target.tagName === 'IMG') {
+                    target.src = '/assets/icons/eye.svg';
+                }
+            });
+            $('#showPassword').on('mouseup', e => {
+                $('#Password').attr('type', 'password');
+                let target = e.target;
+                if (e.target.tagName === 'BUTTON') {
+                    target = e.target.firstElementChild;
+                }
+                if (target.tagName === 'IMG') {
+                    target.src = '/assets/icons/eye-crossed.svg';
+                }
+            });
+        });
+    </script>
+}
