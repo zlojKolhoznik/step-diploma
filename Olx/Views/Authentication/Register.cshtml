@@ -1,35 +1,45 @@
-﻿@model Olx.ViewModels.LoginViewModel
+﻿@model Olx.ViewModels.RegisterViewModel
+
 @{
+    ViewBag.Title = "Реєстрація";
     Layout = "_Authentication";
-    ViewData["Title"] = "Вхід";
 }
 
 <form class="auth-form" method="post">
-    <input asp-for="ReturnUrl" type="hidden"/>
-    <div class="row justify-content-between align-items-center">
-        <div class="form-title col-4">Вхід</div>
-        <div class="logo col-8">
-            <a asp-action="Index" asp-controller="Home">
-                <img src="~/assets/icons/logo.png" alt="logo">
-            </a>
-        </div>
-    </div>
-    <div class="form-subtitle mt-4 mb-3">Введіть свої дані для входу</div>
+    <input type="hidden" asp-for="ReturnUrl">
+    <div class="form-title col-4">Реєстрація</div>
+    <div class="form-subtitle mt-4 mb-3">Введіть, будь ласка, свої дані</div>
     <div class="form-group mb-3">
         <div class="input-wrapper">
-            <label asp-for="Username" class="label"></label>
-            <input asp-for="Username"/>
+            <label asp-for="Name" class="label"></label>
+            <input asp-for="Name">
             <button class="erase-input"><i class="bi bi-x-lg"></i></button>
         </div>
-        <span asp-validation-for="Username" class="text-danger"></span>
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <div class="input-wrapper">
+            <label asp-for="Email" class="label"></label>
+            <input asp-for="Email">
+            <button class="erase-input"><i class="bi bi-x-lg"></i></button>
+        </div>
+        <span asp-validation-for="Email" class="text-danger"></span>
     </div>
     <div class="form-group mb-3">
         <div class="input-wrapper">
             <label asp-for="Password" class="label"></label>
-            <input asp-for="Password" type="password"/>
-            <button class="show-password"><img src="~/assets/icons/eye-crossed.svg"/></button>
+            <input asp-for="Password" type="password">
+            <button class="show-password"><img src="~/assets/icons/eye-crossed.svg" /></button>
         </div>
         <span asp-validation-for="Password" class="text-danger"></span>
+    </div>
+    <div class="form-group mb-3">
+        <div class="input-wrapper">
+            <label asp-for="ConfirmPassword" class="label"></label>
+            <input asp-for="ConfirmPassword" type="password">
+            <button class="show-password"><img src="~/assets/icons/eye-crossed.svg" /></button>
+        </div>
+        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
     </div>
     <div class="form-group mb-3">
         <div class="d-flex justify-content-between">
@@ -37,9 +47,6 @@
                 <input asp-for="IsPersistent"/>
                 <span class="checkmark"></span>
                 <label asp-for="IsPersistent">Запам'ятайте мене</label>
-            </div>
-            <div class="forgot-password">
-                <a asp-page="/Authentication/ForgotPassword">Забули пароль?</a>
             </div>
         </div>
     </div>
@@ -74,43 +81,40 @@
         </button>
     </div>
 </form>
-
 <div class="redirect-container text-center mb-3">
-    <span>Новий користувач?</span>
-    <a asp-action="Register">Зареєструйтесь</a>
+    <span>Уже є акаунт?</span>
+    <a asp-action="Login">Увійдіть</a>
 </div>
-
 
 @section Scripts
 {
     <script type="text/javascript">
-        $(document).ready(e => {
+        $(document).ready(() => {
+            $('.show-password').click(e => e.preventDefault());
+            $('.show-password').mousedown(e => {
+                let target = $(e.target);
+                target = target.is('button') ? target : target.parent();
+                let input = $(target).prev();
+                input.attr('type', 'text');
+                let img = target.children('img').get(0);
+                img.src = '/assets/icons/eye.svg';
+            });
+            $('.show-password').mouseup(e => {
+                let target = $(e.target);
+                target = target.is('button') ? target : target.parent();
+                let input = $(target).prev();
+                input.attr('type', 'password');
+                let img = target.children('img').get(0);
+                console.log(img);
+                img.src = '/assets/icons/eye-crossed.svg';
+            });
             $('.erase-input').click(e => {
                 e.preventDefault();
-                $('#Username').val('');
-            });
-            $('.show-password').click(e => e.preventDefault());
-            $('.show-password').on('mousedown', e =>{
-                $('#Password').attr('type', 'text');
-                let target = e.target;
-                if (e.target.tagName === 'BUTTON') {
-                    target = e.target.firstElementChild;
-                }
-                if (target.tagName === 'IMG') {
-                    target.src = '/assets/icons/eye.svg';
-                }
-            });
-            $('.show-password').on('mouseup', e => {
-                $('#Password').attr('type', 'password');
-                let target = e.target;
-                if (e.target.tagName === 'BUTTON') {
-                    target = e.target.firstElementChild;
-                }
-                if (target.tagName === 'IMG') {
-                    target.src = '/assets/icons/eye-crossed.svg';
-                }
+                let target = $(e.target);
+                target = target.is('button') ? target : target.parent();
+                let input = $(target).prev();
+                input.val('');
             });
         });
-        
     </script>
 }

@@ -5,10 +5,10 @@ namespace Olx.ViewModels;
 public class LoginViewModel
 {
     [Display(Name = "Електронна пошта")]
-    public string? Username { get; set; }
+    public string Username { get; set; }
 
     [Display(Name = "Пароль")]
-    public string? Password { get; set; }
+    public string Password { get; set; }
     
     [Display(Name = "Запам'ятати мене")]
     public bool IsPersistent { get; set; }
