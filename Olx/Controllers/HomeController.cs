@@ -1,16 +1,19 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Olx.Data;
 using WebApplication1.Models;
 
-namespace WebApplication1.Controllers;
+namespace Olx.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly ShopDbContext _context;
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ShopDbContext context)
     {
         _logger = logger;
+        _context = context;
     }
 
     public IActionResult Index()

@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="~/Olx.styles.css" asp-append-version="true"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/css/header.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/css/product-card.css" asp-append-version="true"/>
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
@@ -41,17 +43,27 @@
     </main>
 </div>
 
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2024 - Olx - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-</footer>
+<partial name="_Footer"/>
+@* <footer class="border-top footer text-muted"> *@
+@*     <div class="container"> *@
+@*         &copy; 2024 - Olx - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> *@
+@*     </div> *@
+@* </footer> *@
 <script src="~/lib/jquery/dist/jquery.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 <script src="~/js/signalr/dist/browser/signalr.min.js"></script>
 <script src="~/js/chat.js"></script>
 <script src="~/js/header.js"></script>
+<script src="/js/product.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.cityName').each((index, element) => {
+            const ref = $(element).data('ref');
+            getCityNameByRefIndex(ref, element);
+        })
+    });
+</script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

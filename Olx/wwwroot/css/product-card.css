@@ -1,0 +1,120 @@
+* {
+    --black-color: #353535;
+    --light-color: #EAEAEA;
+    --red-color: #FB6C6C;
+    --white-color: #F8F8F8;
+    --green-color: #19A896;
+}
+
+a:has(.product-card) {
+    text-decoration: none;
+}
+
+.product-card {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--light-color);
+    border-radius: 8px;
+    overflow: hidden;
+    padding: 10px;
+    max-width: 260px;
+}
+
+.product-card-header {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.product-card-header img {
+    width: 240px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 4px;
+    z-index: 1;
+}
+
+.product-card-header .like-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background-color: var(--light-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.product-card-header .shipment-button {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    width: 32px;
+    height: 32px;
+    background-color: var(--light-color);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.product-card-header .promoted-label {
+    background-color: var(--green-color);
+    color: var(--light-color);
+    border-radius: 3px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    text-align: center;
+    font-size: 1em;
+    font-weight: 700;
+    padding: 3px 6px;
+}
+
+.product-card-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card-content-subtitle {
+    font-size: 1em;
+    color: var(--black-color);
+    margin-bottom: 5px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.product-card-content-title {
+    font-size: 1.2em;
+    color: var(--black-color);
+    margin-bottom: 5px;
+    font-weight: 600;
+    text-align: start;
+}
+
+.product-card-content-info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.product-card-content-info .price {
+    font-size: 1.2em;
+    color: var(--black-color);
+    font-weight: 600;
+}
+
+.product-card-content-info .state {
+    font-size: .9em;
+    color: var(--light-color);
+    background-color: var(--red-color);
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-weight: 700;
+}
+
+.shipment-button:hover,
+.like-button:hover {
+    background-color: var(--white-color);
+}

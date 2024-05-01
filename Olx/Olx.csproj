@@ -33,11 +33,10 @@
       <_ContentIncludedByDefault Remove="wwwroot\assets\photos\image_2024-03-27_151428045.png" />
       <_ContentIncludedByDefault Remove="wwwroot\assets\photos\image_2024-03-27_151452247.png" />
       <_ContentIncludedByDefault Remove="Views\Authorization\Login.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Components\ProductCard\Default.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="ViewComponents\" />
-      <Folder Include="Views\Shared\Components\" />
       <Folder Include="wwwroot\assets\photos\" />
     </ItemGroup>
 

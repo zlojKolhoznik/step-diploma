@@ -1,5 +1,10 @@
 ﻿* {
     font-family: "Bitter", serif;
+    --light-color: #EAEAEA;
+    --black-color: #353535;
+    --red-color: #FB6C6C;
+    --green-color: #19A896;
+    --white-color: #F8F8F8;
 }
 
 body, html {
@@ -10,11 +15,11 @@ body, html {
 .wrapper {
     display: flex;
     height: 100vh;
-    background: #19A896;
+    background: var(--green-color);
 }
 
 .auth-panel-left {
-    background: linear-gradient(to bottom, rgba(242, 239, 233, 20%), rgba(25, 168, 150, 0)) 30%, linear-gradient(to bottom, #FB6C6C, #FB6C6C);
+    background: linear-gradient(to bottom, rgba(242, 239, 233, 20%), rgba(25, 168, 150, 0)) 30%, linear-gradient(to bottom, var(--red-color), var(--red-color));
     border-right: 20px #eaeaea solid;
     z-index: 2;
 }
@@ -59,7 +64,7 @@ body, html {
 }
 
 .site-subtitle {
-    color: #F8F8F8;
+    color: var(--white-color);
     font-weight: 400;
     font-size: 1.25em;
 }
@@ -68,7 +73,7 @@ body, html {
     margin: 5% auto;
     width: 30%;
     height: fit-content;
-    background: #F8F8F8;
+    background: var(--white-color);
     padding: 2% 5%;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
@@ -78,14 +83,14 @@ body, html {
 }
 
 .form-title {
-    color: #353535;
+    color: var(--black-color);
     font-weight: 600;
     font-size: 2.5em;
     vertical-align: top;
 }
 
 .form-subtitle {
-    color: #353535;
+    color: var(--black-color);
     font-weight: 500;
     font-size: 1.25em;
 }
@@ -95,7 +100,7 @@ input[type="text"], input[type="password"] {
     padding: 10px;
     border: 1px solid #908C81;
     border-radius: 5px;
-    background: #F8F8F8;
+    background: var(--white-color);
 }
 
 input[type="text"]:focus, input[type="password"]:focus {
@@ -113,8 +118,8 @@ input[type="text"]:focus, input[type="password"]:focus {
     cursor: pointer;
     border: none;
     outline: none;
-    background: #F8F8F8;
-    color: #19A896;
+    background: var(--white-color);
+    color: var(--green-color);
 }
 
 .show-password {
@@ -124,8 +129,8 @@ input[type="text"]:focus, input[type="password"]:focus {
     cursor: pointer;
     border: none;
     outline: none;
-    background: #F8F8F8;
-    color: #19A896;
+    background: var(--white-color);
+    color: var(--green-color);
 }
 
 .show-password img {
@@ -160,22 +165,22 @@ input[type="text"]:focus, input[type="password"]:focus {
     left: 0;
     height: 25px;
     width: 25px;
-    background-color: #F8F8F8;
+    background-color: var(--white-color);
     border: 1px solid #908C81;
     border-radius: 4px;
 }
 
 .checkbox-group:hover input ~ .checkmark:after {
-    border-color: #19A896;
+    border-color: var(--green-color);
 }
 
 .checkbox-group:hover input ~ .checkmark {
-    border-color: #19A896;
+    border-color: var(--green-color);
 }
 
 .checkbox-group input:checked ~ .checkmark {
-    background-color: #19A896;
-    border-color: #19A896;
+    background-color: var(--green-color);
+    border-color: var(--green-color);
 }
 
 .checkmark:after {
@@ -188,7 +193,7 @@ input[type="text"]:focus, input[type="password"]:focus {
     display: block;
     content: "✔";
     left: 5px;
-    color: #F8F8F8;
+    color: var(--white-color);
 }
 
 .container .checkmark:after {
@@ -196,14 +201,14 @@ input[type="text"]:focus, input[type="password"]:focus {
     top: 5px;
     width: 5px;
     height: 10px;
-    border: solid #F8F8F8;
+    border: solid var(--white-color);
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
     -ms-transform: rotate(45deg);
 }
 
 .checkbox-group input:checked ~ .checkmark:after {
-    border-color: #F8F8F8;
+    border-color: var(--white-color);
 }
 
 .checkbox-group label {
@@ -211,12 +216,12 @@ input[type="text"]:focus, input[type="password"]:focus {
     position: relative;
     cursor: pointer;
     font-size: 1em;
-    color: #19A896;
+    color: var(--green-color);
     font-weight: 500;
 }
 
 .forgot-password a {
-    color: #FB6C6C;
+    color: var(--red-color);
     text-decoration: none;
 }
 
@@ -229,8 +234,8 @@ input[type="text"]:focus, input[type="password"]:focus {
     padding: 10px;
     border: none;
     border-radius: 5px;
-    background: #19A896;
-    color: #F8F8F8;
+    background: var(--green-color);
+    color: var(--white-color);
     font-weight: 600;
     transition: 0.3s;
     cursor: pointer;
@@ -245,7 +250,7 @@ input[type="text"]:focus, input[type="password"]:focus {
     align-items: center;
     text-align: center;
     font-size: 1em;
-    color: #353535;
+    color: var(--black-color);
 }
 
 .separator hr {
@@ -262,22 +267,22 @@ input[type="text"]:focus, input[type="password"]:focus {
 .social-button {
     width: 64px;
     height: 64px;
-    border: 2px solid #EAEAEA;
+    border: 2px solid var(--light-color);
     border-radius: 10px;
     transition: 0.3s;
-    background-color: #F8F8F8;
+    background-color: var(--white-color);
 }
 
 .social-button svg {
-    color: #19A896;
+    color: var(--green-color);
 }
 
 .social-button:hover {
-    background-color: #19A896;
+    background-color: var(--green-color);
 }
 
 .social-button:hover svg {
-    color: #F8F8F8;
+    color: var(--white-color);
 }
 
 .redirect-container {
@@ -285,6 +290,6 @@ input[type="text"]:focus, input[type="password"]:focus {
 }
 
 .redirect-container a {
-    color: #FB6C6C;
+    color: var(--red-color);
     text-decoration: none;
 }
