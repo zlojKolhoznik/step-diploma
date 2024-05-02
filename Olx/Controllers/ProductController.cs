@@ -23,8 +23,8 @@ namespace Olx.Controllers
         // GET: Product -- Table of all products for admin panel
         public async Task<IActionResult> Index()
         {
-            var shopDbContext = _context.Products.Include(p => p.Category).Include(p => p.Owner);
-            return View(await shopDbContext.ToListAsync());
+            var products = _context.Products.Include(p => p.Category).Include(p => p.Owner);
+            return View(await products.ToListAsync());
         }
 
         // GET: Product/Details/5 -- Details of a single product for admin panel
@@ -368,6 +368,37 @@ namespace Olx.Controllers
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ToggleFavorite(int? id)
+        {
+            if (id is null)
+            {
+                return NotFound();
+            }
+            
+            var product = await _context.Products.FindAsync(id);
+            if (product is null)
+            {
+                return NotFound();
+            }
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _context.Users.Include(u => u.Favorites)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            if (!user.Favorites.Remove(product))
+            {
+                user.Favorites.Add(product);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { productId = id, isFavorite = user.Favorites.Contains(product)});
         }
     }
 }

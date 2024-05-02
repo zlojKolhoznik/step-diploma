@@ -6,7 +6,7 @@
     --green-color: #19A896;
 }
 
-a:has(.product-card) {
+.product-card > a {
     text-decoration: none;
 }
 

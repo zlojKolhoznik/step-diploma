@@ -7,4 +7,5 @@
     <a asp-controller="Category">Categories</a>
     <a asp-controller="Product">Products</a>
     <a asp-controller="Chats">Chats</a>
+    @await Component.InvokeAsync("ProductCard", new { product = ViewBag.Product })
 </div>

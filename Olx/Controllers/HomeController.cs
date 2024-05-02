@@ -18,6 +18,8 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
+        var product = _context.Products.First();
+        ViewData["Product"] = product;
         return View();
     }
 
