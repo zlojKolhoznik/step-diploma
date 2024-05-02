@@ -7,7 +7,7 @@
     var user = await UserManager.GetUserAsync(User);
 }
 
-<div class="header d-flex justify-content-around align-items-center mb-3">
+<div class="header d-flex justify-content-around align-items-center">
     <div class="logo-container">
         <a asp-controller="Home" asp-action="Index"><img src="/assets/icons/logo.png" alt="logo" class="logo"></a>
     </div>
@@ -72,10 +72,19 @@
             </div>
         </div>
         <div class="liked-container">
-            <a asp-action="Index" asp-controller="Home">
-                <svg id="likedProducts" width="22" height="21" viewBox="0 0 22 21" fill="#EAEAEA" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11 19L9.55 17.7052C4.4 13.1243 1 10.103 1 6.3951C1 3.37384 3.42 1 6.5 1C8.24 1 9.91 1.79455 11 3.05014C12.09 1.79455 13.76 1 15.5 1C18.58 1 21 3.37384 21 6.3951C21 10.103 17.6 13.1243 12.45 17.715L11 19Z" stroke="currentColor" stroke-width="2"/>
-                </svg>
+            <a asp-action="FavoriteProducts" asp-controller="User">
+                @if (!Context.Request.Path.ToString().ToLower().StartsWith("/user/favoriteproducts"))
+                {
+                    <svg id="likedProducts" width="22" height="21" viewBox="0 0 22 21" fill="#EAEAEA" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 19L9.55 17.7052C4.4 13.1243 1 10.103 1 6.3951C1 3.37384 3.42 1 6.5 1C8.24 1 9.91 1.79455 11 3.05014C12.09 1.79455 13.76 1 15.5 1C18.58 1 21 3.37384 21 6.3951C21 10.103 17.6 13.1243 12.45 17.715L11 19Z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                }
+                else
+                {
+                    <svg id="likedProducts" width="22" height="21" viewBox="0 0 22 21" fill="#19A896" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11 19L9.55 17.7052C4.4 13.1243 1 10.103 1 6.3951C1 3.37384 3.42 1 6.5 1C8.24 1 9.91 1.79455 11 3.05014C12.09 1.79455 13.76 1 15.5 1C18.58 1 21 3.37384 21 6.3951C21 10.103 17.6 13.1243 12.45 17.715L11 19Z"/>
+                    </svg>
+                }
             </a>
         </div>
     </div>

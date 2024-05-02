@@ -37,11 +37,11 @@
 @*     </nav> *@
 @* </header> *@
 <partial name="_Header"/>
-<div class="container">
-    <main role="main" class="pb-3">
-        @RenderBody()
-    </main>
-</div>
+@* <div class="container"> *@
+<main role="main">
+    @RenderBody()
+</main>
+@* </div> *@
 
 <partial name="_Footer"/>
 @* <footer class="border-top footer text-muted"> *@
@@ -56,37 +56,7 @@
 <script src="~/js/chat.js"></script>
 <script src="~/js/header.js"></script>
 <script src="/js/product.js"></script>
-<script type="text/javascript">
-    $(document).ready(function () {
-        $('.cityName').each((index, element) => {
-            const ref = $(element).data('ref');
-            getCityNameByRefIndex(ref, element);
-        });
-        $('.product-card > a').click(e => {
-            if (e.target.tagName.toLowerCase() === 'button' 
-            || e.target.tagName.toLowerCase() === 'svg' 
-            || e.target.tagName.toLowerCase() === 'path') {
-                e.preventDefault();
-            }
-        });
-        $('.like-button').click(e => {
-            const id = $(e.target).closest('.product-card').data('id');
-            $.post('/Product/ToggleFavorite', { id }, function (data) {
-                console.log(data)
-                let svg = $(`.product-card[data-id="${id}"] .like-button svg`);
-                console.log(svg);
-                if (data.isFavorite) {
-                    svg.attr('fill', '#FB6C6C');
-                    svg.find('path').attr('stroke', 'none');
-                } else {
-                    svg.attr('fill', 'none');
-                    svg.find('path').attr('stroke', '#353535');
-                    svg.find('path').attr('stroke-width', '2');
-                }
-            });
-        });
-    });
-</script>
+<script src="/js/product-card.js"></script>
 @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

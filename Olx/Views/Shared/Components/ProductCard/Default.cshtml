@@ -5,7 +5,6 @@
     <a asp-controller="Product" asp-action="UserView" asp-route-id="@Model.Id">
         <div class="product-card-header">
             <img src="@Model.PhotoUrls.First()" alt="" class="product-image">
-            @* TODO: Add favorites logic *@
             <button class="like-button">
                 @if (ViewBag.IsFavorite)
                 {
