@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<Olx.Models.Product>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -7,4 +9,10 @@
     <a asp-controller="Category">Categories</a>
     <a asp-controller="Product">Products</a>
     <a asp-controller="Chats">Chats</a>
+    <div class="d-flex flex-wrap overflow-auto">
+        @foreach (var product in Model)
+        {
+            @await Component.InvokeAsync("ProductCard", new { product })
+        }
+    </div>
 </div>

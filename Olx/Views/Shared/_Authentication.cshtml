@@ -1,0 +1,49 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="~/Olx.styles.css" asp-append-version="true"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css"/>
+    <link rel="stylesheet" href="~/css/authentication.css" asp-append-version="true"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bitter:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    @await RenderSectionAsync("Styles", false)
+</head>
+<body>
+
+<div class="wrapper">
+        <div class="red-circle"></div>
+        <div class="white-circle"></div>
+    <div class="auth-panel-left col-4">
+        <div class="auth-panel-left-content">
+            <div class="text-group">
+                <h1 class="site-title">BUYSELL</h1>
+                <h2 class="site-subtitle">Усі онлайн-оголошення України на BUYSELL - тут ви знайдете те, що шукали!</h2>
+            </div>
+        </div>
+    </div>
+    <div class="auth-panel-right">
+        @RenderBody()
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+<script src="~/js/site.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", false)
+<script>
+    @if (ViewBag.Error is not null)
+    {
+        @:toastr.error("@ViewBag.Error");
+    }
+</script>
+</body>
+</html>
+

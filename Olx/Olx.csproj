@@ -9,6 +9,9 @@
 
     <ItemGroup>
       <PackageReference Include="MailKit" Version="4.4.0" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="8.0.4" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="8.0.4" />
+      <PackageReference Include="Microsoft.AspNetCore.Authentication.Twitter" Version="8.0.4" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
       <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.3" />
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.3" />
@@ -30,6 +33,7 @@
       <_ContentIncludedByDefault Remove="wwwroot\assets\photos\image_2024-03-27_151428045.png" />
       <_ContentIncludedByDefault Remove="wwwroot\assets\photos\image_2024-03-27_151452247.png" />
       <_ContentIncludedByDefault Remove="Views\Authorization\Login.cshtml" />
+      <_ContentIncludedByDefault Remove="Views\Components\ProductCard\Default.cshtml" />
     </ItemGroup>
 
     <ItemGroup>

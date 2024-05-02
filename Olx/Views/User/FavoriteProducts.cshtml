@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Olx.Models.Product>
+
+@{
+    ViewBag.Title = "Обрані оголошення";
+    Layout = "_Layout";
+}
+<div class="main-container">
+    <section class="top-part mb-5">
+        <h2 class="title mb-5">@ViewBag.Title</h2>
+        <div class="d-flex flex-wrap overflow-auto products-container">
+            @foreach (var product in Model)
+            {
+                @await Component.InvokeAsync("ProductCard", new { product })
+            }
+        </div>
+    </section>
+    <section class="bottom-part">
+        <div></div>
+        <a asp-controller="Product" asp-action="ClearFavorites">Очистити обрані оголошення</a>
+        <div></div>
+    </section>
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/favorite-products.css" asp-append-version="true">
+}

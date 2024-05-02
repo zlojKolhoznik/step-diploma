@@ -42,5 +42,15 @@ public class ShopDbContext : IdentityDbContext<User>
 
         modelBuilder.Entity<Category>().HasIndex(c => c.NormalizedName).IsUnique();
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<User>().HasMany<Product>(u => u.Favorites)
+            .WithMany(p => p.FavoredBy)
+            .UsingEntity<Dictionary<string, object>>(
+                "Favorites",
+                j => j.HasOne<Product>().WithMany().OnDelete(DeleteBehavior.NoAction),
+                j => j.HasOne<User>().WithMany().OnDelete(DeleteBehavior.NoAction));
+
+        modelBuilder.Entity<Product>().HasOne<User>(p => p.Owner)
+            .WithMany(u => u.Products);
     }
 }

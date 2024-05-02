@@ -1,4 +1,6 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,18 +15,20 @@ namespace Olx.Controllers
     {
         private readonly ShopDbContext _context;
         private readonly IPhotoManager _photoManager;
+        private readonly UserManager<User> _userManager;
 
-        public ProductController(ShopDbContext context, IPhotoManager photoManager)
+        public ProductController(ShopDbContext context, IPhotoManager photoManager, UserManager<User> userManager)
         {
             _context = context;
             _photoManager = photoManager;
+            _userManager = userManager;
         }
 
         // GET: Product -- Table of all products for admin panel
         public async Task<IActionResult> Index()
         {
-            var shopDbContext = _context.Products.Include(p => p.Category).Include(p => p.Owner);
-            return View(await shopDbContext.ToListAsync());
+            var products = _context.Products.Include(p => p.Category).Include(p => p.Owner);
+            return View(await products.ToListAsync());
         }
 
         // GET: Product/Details/5 -- Details of a single product for admin panel
@@ -368,6 +372,49 @@ namespace Olx.Controllers
         private bool ProductExists(int id)
         {
             return _context.Products.Any(e => e.Id == id);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> ToggleFavorite(int? id)
+        {
+            if (id is null)
+            {
+                return NotFound();
+            }
+            
+            var product = await _context.Products.FindAsync(id);
+            if (product is null)
+            {
+                return NotFound();
+            }
+            
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _context.Users.Include(u => u.Favorites)
+                .FirstOrDefaultAsync(u => u.Id == userId);
+            if (user is null)
+            {
+                return NotFound();
+            }
+
+            if (!user.Favorites.Remove(product))
+            {
+                user.Favorites.Add(product);
+            }
+
+            await _context.SaveChangesAsync();
+            return Ok(new { productId = id, isFavorite = user.Favorites.Contains(product)});
+        }
+
+        [Authorize]
+        public async Task<IActionResult> ClearFavorites()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _context.Users.Include(u => u.Favorites)
+                .FirstAsync(u => u.Id == userId);
+            user.Favorites!.Clear();
+            await _context.SaveChangesAsync();
+            return RedirectToAction("FavoriteProducts", "User");
         }
     }
 }
