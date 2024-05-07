@@ -1,0 +1,30 @@
+﻿<form class="search-bar" asp-action="Search" asp-controller="Home">
+    <div class="group">
+        <input type="text" name="q" id="q" class="search-products"/>
+        <div class="search-input-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z" stroke="#908C81" stroke-width="2" stroke-linecap="round"/>
+                <circle cx="12" cy="12" r="3" stroke="#908C81" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <label for="q" class="search-label"><span>ЩО</span> шукаєте?</label>
+    </div>
+    <div class="group">
+        <input type="text" name="l" id="l" class="search-location"/>
+        <div class="search-input-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 21C12 21 18 14.7 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 14.7 12 21 12 21Z" stroke="#908C81" stroke-width="2"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M12 10C12.5523 10 13 9.55228 13 9C13 8.44772 12.5523 8 12 8C11.4477 8 11 8.44772 11 9C11 9.55228 11.4477 10 12 10Z" stroke="#908C81" stroke-width="2"/>
+            </svg>
+        </div>
+        <label for="l" class="search-label"><span>ДЕ</span> шукаєте?</label>
+        <input type="hidden" name="loc">
+        <div class="suggestions"></div>
+    </div>
+    <button type="submit" class="search-button">
+        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19.2155 19.216L26.666 26.6665" stroke="#F8F8F8" stroke-width="2" stroke-linecap="round"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M13.334 21.3335C17.7523 21.3335 21.334 17.7518 21.334 13.3335C21.334 8.91522 17.7523 5.3335 13.334 5.3335C8.91571 5.3335 5.33398 8.91522 5.33398 13.3335C5.33398 17.7518 8.91571 21.3335 13.334 21.3335Z" stroke="#F8F8F8" stroke-width="2"/>
+        </svg>
+    </button>
+</form>

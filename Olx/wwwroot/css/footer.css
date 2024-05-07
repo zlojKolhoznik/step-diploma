@@ -18,13 +18,8 @@
 
 .logo-container {
     display: flex;
-    justify-content: center;
+    text-align: center;
     align-items: center;
-    flex-direction: column;
-}
-
-.logo {
-    margin-bottom: 20px;
 }
 
 .slogan {
