@@ -194,6 +194,15 @@ namespace Olx.Controllers
                     }
                 }
                 
+                var user = await _userManager.GetUserAsync(User);
+                var enteredPhone = new string(form["sellerPhone"].ToString().Where(char.IsDigit).ToArray());
+                var userPhone = new string(user.PhoneNumber.Where(char.IsDigit).ToArray());
+                if (enteredPhone != userPhone)
+                {
+                    user.PhoneNumber = enteredPhone;
+                    await _userManager.UpdateAsync(user);
+                }
+                
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -294,6 +303,14 @@ namespace Olx.Controllers
                     
                     product.UpdatedAt = DateTime.Now;
                     
+                    var user = await _userManager.GetUserAsync(User);
+                    var enteredPhone = new string(form["sellerPhone"].ToString().Where(char.IsDigit).ToArray());
+                    if (user.PhoneNumber is null || new string(user.PhoneNumber.Where(char.IsDigit).ToArray()) != enteredPhone)
+                    {
+                        user.PhoneNumber = enteredPhone;
+                        await _userManager.UpdateAsync(user);
+                    }
+                    
                     _context.Update(product);
                     await _context.SaveChangesAsync();
                 }
@@ -308,6 +325,7 @@ namespace Olx.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            product.PhotoUrls = allPhotos.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
             ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));

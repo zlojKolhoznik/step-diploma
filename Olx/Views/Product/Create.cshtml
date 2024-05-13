@@ -225,7 +225,7 @@
                     }
                 </div>
                 <div class="input-container">
-                    <input type="text" name="sellerPhone" placeholder="Введіть номер телефону" class="text-input" value="@user.PhoneNumber"/>
+                    <input type="text" name="sellerPhone" placeholder="Введіть номер телефону" class="text-input" value="@user.PhoneNumber" required="required"/>
                     @if (!ViewData.ModelState.IsValid)
                     {
                         <div class="error-icon">
@@ -334,7 +334,7 @@
 
         function updateProgressBar () {
             let progress = $(this).closest('form').find('.progress-bar');
-            let textInputs = $(this).closest('form').find('input[type="text"], input[type="password"], input[type="email"], textarea');
+            let textInputs = $(this).closest('form').find('input[type="text"], input[type="password"], input[type="email"], textarea, input[type="number"]');
             let photoInputs = $(this).closest('form').find('input[type="file"]');
             let radios = $(this).closest('form').find('input[type="radio"]');
             let selects = $(this).closest('form').find('select');
