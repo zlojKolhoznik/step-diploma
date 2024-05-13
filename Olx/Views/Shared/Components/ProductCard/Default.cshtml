@@ -37,14 +37,6 @@
             <div class="product-card-content-title">@(Model.Name.Length > 45 ? Model.Name[..45] + "..." : Model.Name)</div>
             <div class="product-card-content-info">
                 <div class="state">@Html.DisplayFor(p => p.ItemState)</div>
-                @if (Model.PriceType == PriceType.Regular)
-                {
-                    <div class="price">@Model.Price грн.</div>
-                }
-                else
-                {
-                    <div class="price">@Html.DisplayFor(m => m.PriceType)</div>
-                }
             </div>
         </div>
     </a>

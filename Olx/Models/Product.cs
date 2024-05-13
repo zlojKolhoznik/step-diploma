@@ -9,10 +9,10 @@ public class Product
     [Key]
     public int Id { get; set; }
 
-    [MaxLength(50)]
+    [MinLength(5), MaxLength(50)]
     public string Name { get; set; }
 
-    [MinLength(20), MaxLength(10_000)]
+    [MinLength(20), MaxLength(1_000)]
     public string Description { get; set; }
 
     [ForeignKey(nameof(Category))]
@@ -23,8 +23,6 @@ public class Product
 
     [ValidateNever]
     public string[] PhotoUrls { get; set; }
-
-    public PriceType PriceType { get; set; }
 
     public double? Price { get; set; }
     

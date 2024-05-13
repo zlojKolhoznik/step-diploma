@@ -156,15 +156,6 @@ namespace Olx.Controllers
         
         }
 
-        // GET: Product/Create
-        public IActionResult Create()
-        {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
-            ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
-            return View(new Product());
-        }
-
         // POST: Product/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -179,7 +170,9 @@ namespace Olx.Controllers
             
             if (ModelState.IsValid)
             {
-                product.CreatedAt = DateTime.Now;
+                var time = DateTime.Now;
+                product.CreatedAt = time;
+                product.UpdatedAt = time;
                 product.PhotoUrls = new string[photos.Length];
                 for (int i = 0; i < photos.Length; i++)
                 {
@@ -231,6 +224,15 @@ namespace Olx.Controllers
             ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
             ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
             return View(product);
+        }
+        
+        [Authorize]
+        public async Task<IActionResult> Create()
+        {
+            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
+            ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
+            return View(new Product());
         }
 
         // POST: Product/Edit/5

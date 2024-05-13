@@ -75,16 +75,6 @@
                 <span class="text-danger" asp-validation-for="PhotoUrls"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PriceType" class="control-label"></label>
-                <select asp-for="PriceType" class="form-control" asp-items="ViewBag.PriceType"></select>
-                <span asp-validation-for="PriceType" class="text-danger"></span>
-            </div>
-            <div class="form-group"  style="display: @(Model.PriceType == PriceType.Regular ? "block": "none")">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
                 <label asp-for="ItemState" class="control-label"></label>
                 <select asp-for="ItemState" class="form-control" asp-items="ViewBag.ItemState"></select>
                 <span asp-validation-for="ItemState" class="text-danger"></span>

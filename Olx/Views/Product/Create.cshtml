@@ -1,54 +1,90 @@
-@inject UserManager<User> UserManager
-
-@using Microsoft.AspNetCore.Identity
+﻿@using Microsoft.AspNetCore.Identity
 @using Olx.Models
 @model Olx.Models.Product
 
+@inject UserManager<User> UserManager
+
 @{
-    ViewData["Title"] = "Create";
+    ViewBag.Title = "Нове оголошення";
+    Layout = "_Layout";
+    var user = UserManager.GetUserAsync(User).Result;
 }
 
-<h1>Create</h1>
-
-<h4>Product</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="OwnerId" value="@UserManager.GetUserId(User)" >
-            <input type="hidden" asp-for="City">
-            <div class="form-group">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+<div class="page-top d-flex justify-content-around">
+    <div></div> <!-- This is an empty element for correct alignment -->
+    <h1 class="title">Нове оголошення</h1>
+    <p class="info"><span>*</span> - обов'язково для заповнення</p>
+</div>
+<div class="main-container">
+    <form method="post" class="d-flex justify-content-center align-items-center flex-column" enctype="multipart/form-data">
+        <input type="hidden" asp-for="OwnerId" value="@UserManager.GetUserId(User)">
+        <input type="hidden" asp-for="City">
+        <div class="input-group-container my-2 mt-4">
+            <div class="d-flex flex-column col-7">
+                <div class="d-flex justify-content-between">
+                    <label asp-for="Name">Назва<span>*</span></label>
+                    <span asp-validation-for="Name"></span>
+                </div>
+                <div class="input-container">
+                    <input asp-for="Name" class="text-input" placeholder="Наприклад, iPhone 11 з гарантією"/>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="error-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5.8V9.8M9 12.2V13M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#FB6C6C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    }
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="input-info">Введіть щонайменше 5 символів</div>
+                    <div class="input-length-counter" data-max="50" data-min="5"></div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Description" class="form-label"></label>
-                <textarea asp-for="Description" class="form-control" rows="10"></textarea>
-                <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+        <div class="separator my-2"></div>
+        <div class="input-group-container my-2">
+            <div class="d-flex flex-column col-7">
+                <div class="d-flex justify-content-between">
+                    <label asp-for="CategoryId">Категорія<span>*</span></label>
+                    <span asp-validation-for="CategoryId" class="error-message"></span>
+                </div>
+                <div class="input-container">
+                    <select asp-for="CategoryId" class="select-input" asp-items="ViewBag.CategoryId">
+                        <option disabled="disabled" selected="selected">Виберіть відповідну категорію</option>
+                    </select>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="error-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5.8V9.8M9 12.2V13M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#FB6C6C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    }
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="form-label"></label>
-                <select asp-for="CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+        </div>
+        <div class="separator my-2"></div>
+        <div class="input-group-container my-2">
+            <div class="d-flex flex-column col-7">
+                <div class="d-flex justify-content-between">
+                    <label>Фото<span>*</span></label>
+                    <span asp-validation-for="PhotoUrls" class="error-message"></span>
+                </div>
                 <div class="photos-container">
-                    <h4>Photos</h4>
-                    <div class="flex-wrap">
+                    <div class="d-flex flex-wrap justify-content-between">
                         <div class="photo-input-container">
                             <input type="file" name="photos" accept="image/*"/>
-                            <img src="/assets/icons/free-icon-camera-7708970.png"/>
+                            <img src="/assets/icons/camera.svg"/>
                             <div class="delete-panel">
                                 <button class="delete-button"><i class="bi bi-trash3"></i></button>
                             </div>
                         </div>
-                        @for (int i = 0; i < 8; i++)
+                        @for (int i = 0; i < 7; i++)
                         {
                             <div class="photo-container">
                                 <input type="file" name="photos" accept="image/*"/>
-                                <img src="/assets/icons/free-icon-gallery-964053.png"/>
+                                <img src="/assets/icons/camera.svg"/>
                                 <div class="delete-panel">
                                     <button class="delete-button"><i class="bi bi-trash3"></i></button>
                                 </div>
@@ -56,116 +92,276 @@
                         }
                     </div>
                 </div>
-                <span asp-validation-for="PhotoUrls" class="text-danger"></span>
+                <div class="input-info">Перше фото буде на обкладинці оголошення</div>
             </div>
-            <div class="form-group">
-                <label asp-for="PriceType" class="form-label"></label>
-                <select asp-for="PriceType" class="form-control" asp-items="ViewBag.PriceType"></select>
-                <span asp-validation-for="PriceType" class="text-danger"></span>
-            </div>
-            <div class="form-group"  style="display: @(Model.PriceType == PriceType.Regular ? "block": "none")">
-                <label asp-for="Price" class="form-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ItemState" class="form-label"></label>
-                <select asp-for="ItemState" class="form-control" asp-items="ViewBag.ItemState"></select>
-                <span asp-validation-for="ItemState" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsAutorenewing" /> @Html.DisplayNameFor(model => model.IsAutorenewing)
-                </label>
-            </div>
-            <div class="form-group">
-                <label asp-for="City" class="form-label"></label>
-                <input name="city-name" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-                <div class="suggestions">
+        </div>
+        <div class="separator my-2"></div>
+        <div class="input-group-container my-2">
+            <div class="d-flex flex-column col-7">
+                <div class="d-flex justify-content-between">
+                    <label asp-for="Description">Опис<span>*</span></label>
+                    <span asp-validation-for="Description" class="error-message"></span>
+                </div>
+                <div class="input-container">
+                    <textarea asp-for="Description" class="text-area" placeholder="Подумайте, що би ви хотіли дізнатися з оголошення і додайте це в опис"></textarea>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="error-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5.8V9.8M9 12.2V13M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#FB6C6C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    }
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="input-info">Введіть щонайменше 20 символів</div>
+                    <div class="input-length-counter" data-max="1000" data-min="20"></div>
                 </div>
             </div>
-            <div id="filters"></div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+        </div>
+        <div class="separator my-2"></div>
+        <div class="input-group-container my-2">
+            <div class="d-flex flex-column col-7">
+                <div class="d-flex justify-content-between">
+                    <label>Характеристика<span>*</span></label>
+                </div>
+                <div id="filters"></div>
             </div>
-        </form>
+        </div>
+        <div class="separator my-2"></div>
+        <div class="input-group-container my-2">
+            <div class="d-flex flex-column col-7">
+                <div class="d-flex justify-content-between">
+                    <label>Ціна<span>*</span></label>
+                    <span asp-validation-for="Price" class="error-message"></span>
+                </div>
+                <div class="input-container">
+                    <input asp-for="Price" class="text-input" placeholder="Ціна за 1 шт."/>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="error-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5.8V9.8M9 12.2V13M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#FB6C6C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    }
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="input-info">Введіть ціну в гривнях</div>
+                </div>
+            </div>
+        </div>
+        <div class="separator my-2"></div>
+        <div class="input-group-container my-2">
+            <div class="d-flex flex-column col-7">
+                <div class="d-flex justify-content-between">
+                    <label>Місцезнаходження<span>*</span></label>
+                    <span asp-validation-for="City" class="error-message"></span>
+                </div>
+                <div class="input-container">
+                    <input name="city-name" class="text-input" placeholder="Введіть ваше місцезнаходження"/>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="error-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5.8V9.8M9 12.2V13M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#FB6C6C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    }
+                    <div class="suggestions"></div>
+                </div>
+            </div>
+        </div>
+        <div class="separator my-2"></div>
+        <div class="input-group-container my-2">
+            <div class="d-flex flex-column col-7">
+                <div class="d-flex justify-content-between">
+                    <label>Стан<span>*</span></label>
+                    <span asp-validation-for="ItemState" class="error-message"></span>
+                </div>
+                <div class="row gap-4 m-0">
+                    <div class="input-container col-5">
+                        <input type="radio" id="itemStateNew" name="itemState" value="@((int)ItemState.New)" class="radio-input">
+                        <label for="itemStateNew">Новий товар</label>
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                        <div class="error-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5.8V9.8M9 12.2V13M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#FB6C6C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        }
+                    </div>
+                    <div class="input-container col-5">
+                        <input type="radio" id="itemStateUsed" name="itemState" value="@((int)ItemState.Used)" class="radio-input">
+                        <label for="itemStateUsed">Вживаний товар</label>
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                        <div class="error-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5.8V9.8M9 12.2V13M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#FB6C6C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="separator my-2"></div>
+        <div class="input-group-container my-2">
+            <div class="d-flex flex-column col-7">
+                <div class="d-flex-justify-content-between">
+                    <label>Дані<span>*</span></label>
+                </div>
+                <div class="input-container">
+                    <input type="text" name="sellerName" placeholder="Введіть ім'я продавця" class="text-input" value="@user.Name"/>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="error-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5.8V9.8M9 12.2V13M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#FB6C6C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    }
+                </div>
+                <div class="input-container">
+                    <input type="text" name="sellerPhone" placeholder="Введіть номер телефону" class="text-input" value="@user.PhoneNumber"/>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="error-icon">
+                            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 5.8V9.8M9 12.2V13M9 17C13.4183 17 17 13.4183 17 9C17 4.58172 13.4183 1 9 1C4.58172 1 1 4.58172 1 9C1 13.4183 4.58172 17 9 17Z" stroke="#FB6C6C" stroke-width="2" stroke-linecap="round"/>
+                            </svg>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between submit-container align-items-center my-4">
+            <div class="d-flex flex-column col-4">
+                <div class="d-flex justify-content-between">
+                    <label class="progress-label">Заповненість оголошення&nbsp;</label>
+                    <div class="input-length-counter" data-max="8"></div>
+                </div>
+                <div class="input-container">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3">
+                <button type="submit" class="submit-input">Опублікувати</button>
+            </div>
+        </div>
+    </form>
+    <div class="preview-container">
+        <hr class="line">
+        <a asp-action="Preview" asp-controller="Product" target="_blank">Попередній перегляд</a>
+        <hr class="line">
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/new-product.css" asp-append-version="true"/>
+}
 
-@section Scripts
-{
-    <script src="/js/product.js"></script>
+@section Scripts {
     <script type="text/javascript">
         $(document).ready(() => {
-            $('#PriceType').on('change', () => {
-                if ($('#PriceType').val() === '0') {
-                    $('#Price').css('display', 'block');
-                    $('#Price').prev().text('Price');
+            $('.input-length-counter').each((index, element) => {
+                let max = $(element).data('max');
+                $(element).text(`0/${max}`);
+            });
+            $('input[type="text"], input[type="password"], input[type="email"], textarea').on('input', function () {
+                let counter = $(this).closest('.d-flex').find('.input-length-counter');
+                let max = counter.data('max');
+                let min = counter.data('min');
+                let current = $(this).val().length;
+                counter.text(`${current}/${max}`);
+                if (min && current < min) {
+                    counter.css('color', '#FB6C6C');
                 } else {
-                    $('#Price').css('display', 'none');
-                    $('#Price').prev().text('');
+                    counter.css('color', '#353535');
+    
                 }
             });
-            
+            $('input, select').on('input', updateProgressBar);
+            $('.photo-input-container input[type="file"]').on('change', photoUploadHandler);
+            $('.photo-input-container').on('click', (e) => {
+                $(e.target).children('input').trigger('click');
+            });
+            $('.delete-button').on('click', deletePhotoHandler);
             $('#CategoryId').on('change', () => {
                 $.ajax({
                     url: '/Filter/ByCategory/' + $('#CategoryId').val(),
                     type: 'GET',
                     success: data => {
-                        let filters = $('#filters');
-                        filters.empty();
-                        filters.append('<h4>Filters</h4>');
+                        let filtersDiv = $('#filters');
+                        filtersDiv.empty();
                         if (data.length === 0) {
-                            filters.append('<p>No filters available for this category</p>');
+                            filtersDiv.append('<p>Немає доступних характеристик для цієї категорії</p>');
                         }
-                        $.each(data,  (index, value) => {
-                            filters.append('<div class="form-group"></div>');
-                            let formGroup = filters.children().last();
+                        $.each(data, (index, value) => {
+                            filtersDiv.append('<div class="input-container"></div>');
+                            let inputContainer = filtersDiv.children().last();
                             if (value.filterType === 2) {
-                                formGroup.addClass('form-check');
-                                formGroup.append('<label class="form-check-label">' 
-                                + '<input class="form-check-input" type="checkbox" name="' + value.name + '" />' 
-                                + value.name + '</label>');
+                                inputContainer.append('<input type="checkbox" name="' + value.name + '" class="checkbox-input"/>');
+                                inputContainer.append('<label>' + value.name + '</label>');
                             } else {
-                                formGroup.append('<label class="form-label">' + value.name + '</label>');
                                 if (value.filterType === 0) {
-                                    formGroup.append('<input class="form-control" name="' + value.name + '" />');
+                                    inputContainer.append('<input type="text" name="' + value.name + '" class="text-input" placeholder="' + value.name + '"/>');
                                 } else if (value.filterType === 1) {
-                                    formGroup.append('<input class="form-control" type="number" name="' + value.name + '" />');
+                                    inputContainer.append('<input type="number" name="' + value.name + '" class="text-input" placeholder="' + value.name + '" min="0.00" step="0.01"/>');
                                 } else {
                                     console.log('Unknown filter type: ' + value.filterType);
+                                    return;
                                 }
                             }
-                        })
+                            inputContainer.find('input').on('input', updateProgressBar);
+                        });
+                        updateProgressBar();
                     },
                     error: function (msg) {
                         console.log(msg);
                     }
                 });
             });
+            $('#CategoryId').trigger('change');
             $('.suggestion').on('click', suggestionClickHandler);
             $('input[name="city-name"]').on('input', cityInputChanged);
-            $('#CategoryId').trigger('change');
-            $('.photo-input-container input[type="file"]').on('change', photoUploadHandler);
-            $('.photo-input-container').on('click', (e) => {
-                $(e.target).children('input').trigger('click');
-            });
-            $('.photo-input-container img').on('click', (e) => {
-                $(e.target).parent().trigger('click');
-            });
-            $('.delete-button').on('click', deletePhotoHandler);
-            if ($('input[name="City"]').val() !== '') {
-                getCityNameByRef();
-            }
         });
-    </script>
-}
 
-@section Styles {
-    <link rel="stylesheet" href="/css/product.css" />
+        function updateProgressBar () {
+            let progress = $(this).closest('form').find('.progress-bar');
+            let textInputs = $(this).closest('form').find('input[type="text"], input[type="password"], input[type="email"], textarea');
+            let photoInputs = $(this).closest('form').find('input[type="file"]');
+            let radios = $(this).closest('form').find('input[type="radio"]');
+            let selects = $(this).closest('form').find('select');
+            let counter = $(progress).closest('.d-flex').find('.input-length-counter');
+            let filled = 0;
+            textInputs.each((index, element) => {
+                if ($(element).val().length > 0) {
+                    filled++;
+                }
+            });
+            if (photoInputs[0].files.length > 0) {
+                filled++;
+            }
+            radios.each((index, element) => {
+                if ($(element).prop('checked')) {
+                    filled++;
+                }
+            });
+            selects.each((index, element) => {
+                if ($(element).val() !== null) {
+                    filled++;
+                }
+            });
+            let inputsCount = textInputs.length + selects.length + 2; // +1 for photo inputs and +1 for radios
+            let percent = filled / inputsCount * 100;
+            progress.css('width', percent + '%');
+            counter.text(`${filled}/${inputsCount}`);
+        }
+    </script>
 }

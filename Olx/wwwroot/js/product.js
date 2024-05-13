@@ -10,7 +10,7 @@
     newPhotoContainer.append('<input type="file" name="photos" accept="image/*"/>');
     if (panel.children('.photo-input-container').length === 0) {
         newPhotoContainer.removeClass('photo-container').addClass('photo-input-container');
-        newPhotoContainer.append('<img src="/assets/icons/free-icon-camera-7708970.png"/>');
+        newPhotoContainer.append('<img src="/assets/icons/camera.svg"/>');
         newPhotoContainer.on('click', (e) => {
             $(e.target).children('input').trigger('click');
         });
@@ -19,7 +19,7 @@
         });
         newPhotoContainer.children('input').on('change', photoUploadHandler);
     } else {
-        newPhotoContainer.append('<img src="/assets/icons/free-icon-gallery-964053.png"/>');
+        newPhotoContainer.append('<img src="/assets/icons/camera.svg"/>');
     }
     newPhotoContainer.append('<div class="delete-panel"><button class="delete-button"><i class="bi bi-trash3"></i></button></div>');
     newPhotoContainer.children('.delete-panel').children('.delete-button').on('click', deletePhotoHandler);
@@ -34,12 +34,12 @@ function photoUploadHandler(e) {
             let container = $(input).parent().next();
             let img = $(input).siblings('img');
             img.attr('src', e.target.result);
-            img.attr('style', 'width: 98px; height: 98px; margin: 0; border-radius: 5px;');
+            // img.attr('style', 'width: 98px; height: 98px; margin: 0; border-radius: 5px;');
             $(input).parent().removeClass('photo-input-container').addClass('photo-container has-photo');
             $(input).parent().on('click', null);
             $(input).siblings('img').on('click', null);
             container.removeClass('photo-container').addClass('photo-input-container');
-            container.children('img').attr('src', '/assets/icons/free-icon-camera-7708970.png');
+            // container.children('img').attr('src', '/assets/icons/free-icon-camera-7708970.png');
             container.on('click', (e) => {
                 $(e.target).children('input').trigger('click');
             });
@@ -91,7 +91,7 @@ function cityInputChanged(e) {
             let suggestions = $('.suggestions');
             suggestions.empty();
             if (data.length === 0) {
-                suggestions.append('<div class="text-danger">No suggestions found</div>');
+                suggestions.append('<div style="color: var(--red-accent-color);">No suggestions found</div>');
             }
             $.each(data, (index, value) => {
                 suggestions.append('<li class="suggestion" data-ref="' + value.id + '">' + value.name + '</li>')

@@ -34,6 +34,11 @@ builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IPhotoManager, LocalFilesPhotoManager>();
 builder.Services.AddTransient<IDeliveryProvider, NovaPostDeliveryProvider>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Authentication/Login";
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
