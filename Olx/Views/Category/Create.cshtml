@@ -11,10 +11,10 @@
 <hr />
 <div class="row">
     <div class="col-4">
-        <form asp-action="Create">
+        <form asp-action="Create" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-floating mb-3">
-                <select asp-for="ParentId" class="form-control" asp-items="ViewBag.Categories" placeholder="Select Parent">
+                <select asp-for="ParentId" class="form-control" asp-items="ViewBag.ParentId" placeholder="Select Parent">
                     <option value="">None</option>
                 </select>
                 <label asp-for="ParentId" class="form-label"></label>
@@ -29,6 +29,10 @@
                 <label asp-for="NormalizedName" class="form-label"></label>
                 <span class="text-secondary text-sm-start">This is a unique identifier of the category and you won't be able to change it in the future. Leave empty to calculate automatically</span>
                 <span asp-validation-for="NormalizedName" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label for="icon" class="form-label">Icon</label>
+                <input type="file" name="icon" id="icon" class="form-control" placeholder="Icon" required="required">
             </div>
             <div class="form-group border-dark">
                 <span class="fw-bold mb-1">Filters</span>

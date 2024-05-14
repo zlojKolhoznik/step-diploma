@@ -3,16 +3,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Olx.Data;
 using Olx.Models;
+using Olx.Services.Abstract;
 
 namespace Olx.Controllers;
 
 public class CategoryController : Controller
 {
     private readonly ShopDbContext _context;
+    private readonly IPhotoManager _photoManager;
 
-    public CategoryController(ShopDbContext context)
+    public CategoryController(ShopDbContext context, IPhotoManager photoManager)
     {
         _context = context;
+        _photoManager = photoManager;
     }
 
     // GET: Category
@@ -57,7 +60,7 @@ public class CategoryController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Id,ParentId,Name,NormalizedName")] Category category,
-        string[] filters, int[] types)
+        string[] filters, int[] types, IFormFile icon)
     {
         if (filters.SkipLast(1).Any(string.IsNullOrWhiteSpace)) // last element may be empty due to the way the form is rendered
         {
@@ -71,6 +74,8 @@ public class CategoryController : Controller
 
         if (ModelState.IsValid)
         {
+            var iconUrl = await _photoManager.SavePhotoAsync(icon);
+            category.IconUrl = iconUrl;
             _context.Add(category);
             await _context.SaveChangesAsync();
             if (!string.IsNullOrWhiteSpace(filters[0]))
@@ -125,7 +130,7 @@ public class CategoryController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, [Bind("Id,ParentId,Name,NormalizedName")] Category category,
-        string[] filters, int[] types, int[] filterIds)
+        string[] filters, int[] types, int[] filterIds, IFormFile? icon)
     {
         if (id != category.Id)
         {
@@ -136,6 +141,15 @@ public class CategoryController : Controller
         {
             try
             {
+                if (icon is not null)
+                {
+                    if (!string.IsNullOrWhiteSpace(category.IconUrl))
+                    {
+                        await _photoManager.DeletePhotoAsync(category.IconUrl[1..]);
+                    }
+                    var newUrl = await _photoManager.SavePhotoAsync(icon);
+                    category.IconUrl = newUrl;
+                }
                 _context.Update(category);
                 int i = 0;
                 for (; i < filterIds.Length; i++)
@@ -182,7 +196,7 @@ public class CategoryController : Controller
     // GET: Category/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
-        if (id == null)
+        if (id is null)
         {
             return NotFound();
         }
@@ -191,7 +205,7 @@ public class CategoryController : Controller
             .Include(c => c.Parent)
             .Include(c => c.Children)
             .FirstOrDefaultAsync(m => m.Id == id);
-        if (category == null)
+        if (category is null)
         {
             return NotFound();
         }
@@ -205,8 +219,12 @@ public class CategoryController : Controller
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var category = await _context.Categories.FindAsync(id);
-        if (category != null)
+        if (category is not null)
         {
+            if (!string.IsNullOrWhiteSpace(category.IconUrl))
+            {
+                await _photoManager.DeletePhotoAsync(category.IconUrl[1..]);
+            }
             _context.Categories.Remove(category);
         }
 

@@ -9,432 +9,451 @@ using Olx.Data;
 using Olx.Models;
 using Olx.Services.Abstract;
 
-namespace Olx.Controllers
+namespace Olx.Controllers;
+
+public class ProductController : Controller
 {
-    public class ProductController : Controller
+    private readonly ShopDbContext _context;
+    private readonly IPhotoManager _photoManager;
+    private readonly UserManager<User> _userManager;
+
+    public ProductController(ShopDbContext context, IPhotoManager photoManager, UserManager<User> userManager)
     {
-        private readonly ShopDbContext _context;
-        private readonly IPhotoManager _photoManager;
-        private readonly UserManager<User> _userManager;
+        _context = context;
+        _photoManager = photoManager;
+        _userManager = userManager;
+    }
 
-        public ProductController(ShopDbContext context, IPhotoManager photoManager, UserManager<User> userManager)
+    // GET: Product -- Table of all products for admin panel
+    public async Task<IActionResult> Index()
+    {
+        var products = _context.Products.Include(p => p.Category).Include(p => p.Owner);
+        return View(await products.ToListAsync());
+    }
+
+    // GET: Product/Details/5 -- Details of a single product for admin panel
+    public async Task<IActionResult> Details(int? id)
+    {
+        if (id is null)
         {
-            _context = context;
-            _photoManager = photoManager;
-            _userManager = userManager;
+            return NotFound();
         }
 
-        // GET: Product -- Table of all products for admin panel
-        public async Task<IActionResult> Index()
+        var product = await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Owner)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (product is null)
         {
-            var products = _context.Products.Include(p => p.Category).Include(p => p.Owner);
-            return View(await products.ToListAsync());
+            return NotFound();
         }
 
-        // GET: Product/Details/5 -- Details of a single product for admin panel
-        public async Task<IActionResult> Details(int? id)
+        return View(product);
+    }
+
+    // public async Task<IActionResult> GetProductsByFilters(int? categoryId, int? pricing, int? itemState,
+    //     string? city, double? minPrice, double? maxPrice, Dictionary<string, string>? filters)
+    // {
+    //     var products = _context.Products.AsQueryable();
+    //     if (categoryId is not null)
+    //     {
+    //         products = products.Where(p => p.CategoryId == categoryId);
+    //         if (filters is not null)
+    //         {
+    //             products = await FilterProductsAsync(products, categoryId, filters);
+    //         }
+    //     }
+    //     
+    //     if (pricing is not null)
+    //     {
+    //         var priceType = (PriceType)pricing;
+    //         if (Enum.IsDefined(priceType))
+    //         {
+    //             products = products.Where(p => p.PriceType == priceType);
+    //
+    //             if (priceType == PriceType.Regular)
+    //             {
+    //                 products = products.Where(p => p.Price >= (minPrice ?? 0) && p.Price <= (maxPrice ?? double.MaxValue));
+    //             }
+    //         }
+    //         else
+    //         {
+    //             ModelState.AddModelError("pricing", "Invalid pricing type");
+    //         }
+    //     }
+    //     
+    //     if (itemState is not null)
+    //     {
+    //         if (Enum.IsDefined((ItemState)itemState))
+    //         {
+    //             products = products.Where(p => p.ItemState == (ItemState)itemState);
+    //         }
+    //         else
+    //         {
+    //             ModelState.AddModelError("itemState", "Invalid item state");
+    //         }
+    //     }
+    //     
+    //     if (city is not null)
+    //     {
+    //         products = products.Where(p => p.City == city);
+    //     }
+    //     
+    //     return View(await products.ToListAsync());
+    // }
+    //
+    // private async Task<IQueryable<Product>> FilterProductsAsync(IQueryable<Product> products, int? categoryId, Dictionary<string,string> filters)
+    // {
+    //     IEnumerable<FilterDeclaration> declarations = await GetFiltersByCategoryAsync(categoryId);
+    //     foreach (var declaration in declarations)
+    //     {
+    //         if (declaration.FilterType == FilterType.Number)
+    //         {
+    //             if (filters.TryGetValue($"max-{declaration.Name}", out var maxValue))
+    //             {
+    //                 if (double.TryParse(maxValue, out var max))
+    //                 {
+    //                     products = products.Where(p => p.Filters.Any(f =>
+    //                         f.FilterDeclarationId == declaration.Id && double.Parse(f.Value) <= max));
+    //                 }
+    //             }
+    //             
+    //             if (filters.TryGetValue($"min-{declaration.Name}", out var minValue))
+    //             {
+    //                 if (double.TryParse(minValue, out var min))
+    //                 {
+    //                     products = products.Where(p => p.Filters.Any(f =>
+    //                         f.FilterDeclarationId == declaration.Id && double.Parse(f.Value) >= min));
+    //                 }
+    //             }
+    //         }
+    //         else
+    //         {
+    //             if (filters.TryGetValue(declaration.Name, out var value))
+    //             {
+    //                 products = products.Where(p => p.Filters.Any(f =>
+    //                     f.FilterDeclarationId == declaration.Id && f.Value == value));
+    //             }
+    //         }
+    //
+    //     }
+    //     return products;
+    // }
+    //
+    private async Task<IEnumerable<FilterDeclaration>> GetFiltersByCategoryAsync(int? categoryId)
+    {
+        string url =
+            $"https://localhost:7025/Filter/ByCategory/{categoryId}"; // Domain name will probably change so we need to make it dynamic
+        using var client = new HttpClient();
+        client.BaseAddress = new Uri(url);
+        var response = await client.GetAsync(url);
+        if (!response.IsSuccessStatusCode)
         {
-            if (id is null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.Owner)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product is null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            throw new Exception("Failed to get filters");
         }
 
-        // public async Task<IActionResult> GetProductsByFilters(int? categoryId, int? pricing, int? itemState,
-        //     string? city, double? minPrice, double? maxPrice, Dictionary<string, string>? filters)
-        // {
-        //     var products = _context.Products.AsQueryable();
-        //     if (categoryId is not null)
-        //     {
-        //         products = products.Where(p => p.CategoryId == categoryId);
-        //         if (filters is not null)
-        //         {
-        //             products = await FilterProductsAsync(products, categoryId, filters);
-        //         }
-        //     }
-        //     
-        //     if (pricing is not null)
-        //     {
-        //         var priceType = (PriceType)pricing;
-        //         if (Enum.IsDefined(priceType))
-        //         {
-        //             products = products.Where(p => p.PriceType == priceType);
-        //
-        //             if (priceType == PriceType.Regular)
-        //             {
-        //                 products = products.Where(p => p.Price >= (minPrice ?? 0) && p.Price <= (maxPrice ?? double.MaxValue));
-        //             }
-        //         }
-        //         else
-        //         {
-        //             ModelState.AddModelError("pricing", "Invalid pricing type");
-        //         }
-        //     }
-        //     
-        //     if (itemState is not null)
-        //     {
-        //         if (Enum.IsDefined((ItemState)itemState))
-        //         {
-        //             products = products.Where(p => p.ItemState == (ItemState)itemState);
-        //         }
-        //         else
-        //         {
-        //             ModelState.AddModelError("itemState", "Invalid item state");
-        //         }
-        //     }
-        //     
-        //     if (city is not null)
-        //     {
-        //         products = products.Where(p => p.City == city);
-        //     }
-        //     
-        //     return View(await products.ToListAsync());
-        // }
-        //
-        // private async Task<IQueryable<Product>> FilterProductsAsync(IQueryable<Product> products, int? categoryId, Dictionary<string,string> filters)
-        // {
-        //     IEnumerable<FilterDeclaration> declarations = await GetFiltersByCategoryAsync(categoryId);
-        //     foreach (var declaration in declarations)
-        //     {
-        //         if (declaration.FilterType == FilterType.Number)
-        //         {
-        //             if (filters.TryGetValue($"max-{declaration.Name}", out var maxValue))
-        //             {
-        //                 if (double.TryParse(maxValue, out var max))
-        //                 {
-        //                     products = products.Where(p => p.Filters.Any(f =>
-        //                         f.FilterDeclarationId == declaration.Id && double.Parse(f.Value) <= max));
-        //                 }
-        //             }
-        //             
-        //             if (filters.TryGetValue($"min-{declaration.Name}", out var minValue))
-        //             {
-        //                 if (double.TryParse(minValue, out var min))
-        //                 {
-        //                     products = products.Where(p => p.Filters.Any(f =>
-        //                         f.FilterDeclarationId == declaration.Id && double.Parse(f.Value) >= min));
-        //                 }
-        //             }
-        //         }
-        //         else
-        //         {
-        //             if (filters.TryGetValue(declaration.Name, out var value))
-        //             {
-        //                 products = products.Where(p => p.Filters.Any(f =>
-        //                     f.FilterDeclarationId == declaration.Id && f.Value == value));
-        //             }
-        //         }
-        //
-        //     }
-        //     return products;
-        // }
-        //
-        private async Task<IEnumerable<FilterDeclaration>> GetFiltersByCategoryAsync(int? categoryId)
+        var content = await response.Content.ReadAsStringAsync();
+        var result = JsonConvert.DeserializeObject<IEnumerable<FilterDeclaration>>(content);
+        return result ?? throw new Exception("Failed to deserialize filters");
+
+    }
+
+    // POST: Product/Create
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Create(Product product, IFormCollection form, IFormFile[] photos)
+    {
+        if (photos.Length == 0)
         {
-            string url = $"https://localhost:7025/Filter/ByCategory/{categoryId}"; // Domain name will probably change so we need to make it dynamic
-            using var client = new HttpClient();
-            client.BaseAddress = new Uri(url);
-            var response = await client.GetAsync(url);
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception("Failed to get filters");
-            }
-            var content = await response.Content.ReadAsStringAsync();
-            var result = JsonConvert.DeserializeObject<IEnumerable<FilterDeclaration>>(content);
-            return result ?? throw new Exception("Failed to deserialize filters");
-        
+            ModelState.AddModelError("PhotoUrls", "At least one photo is required");
         }
 
-        // POST: Product/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Product product, IFormCollection form, IFormFile[] photos)
+        if (ModelState.IsValid)
         {
-            if (photos.Length == 0)
+            var time = DateTime.Now;
+            product.CreatedAt = time;
+            product.UpdatedAt = time;
+            product.PhotoUrls = new string[photos.Length];
+            for (int i = 0; i < photos.Length; i++)
             {
-                ModelState.AddModelError("PhotoUrls", "At least one photo is required");
+                string url = await _photoManager.SavePhotoAsync(photos[i]);
+                product.PhotoUrls[i] = "/" + url.Replace("\\", "/");
             }
-            
-            if (ModelState.IsValid)
+
+            var filterDeclarations = await GetFiltersByCategoryAsync(product.CategoryId);
+            foreach (var filterDeclaration in filterDeclarations)
             {
-                var time = DateTime.Now;
-                product.CreatedAt = time;
-                product.UpdatedAt = time;
-                product.PhotoUrls = new string[photos.Length];
-                for (int i = 0; i < photos.Length; i++)
+                if (form.TryGetValue(filterDeclaration.Name, out var value))
                 {
-                    string url = await _photoManager.SavePhotoAsync(photos[i]);
-                    product.PhotoUrls[i] ="/" + url.Replace("\\", "/");
+                    await _context.FilterValues.AddAsync(new FilterValue
+                    {
+                        FilterDeclarationId = filterDeclaration.Id,
+                        Product = product,
+                        Value = value.ToString()
+                    });
                 }
-
-                var filterDeclarations = await GetFiltersByCategoryAsync(product.CategoryId);
-                foreach (var filterDeclaration in filterDeclarations)
-                {
-                    if (form.TryGetValue(filterDeclaration.Name, out var value))
-                    {
-                        await _context.FilterValues.AddAsync(new FilterValue
-                        {
-                            FilterDeclarationId = filterDeclaration.Id,
-                            Product = product,
-                            Value = value.ToString()
-                        });
-                    }
-                }
-                
-                var user = await _userManager.GetUserAsync(User);
-                var enteredPhone = new string(form["sellerPhone"].ToString().Where(char.IsDigit).ToArray());
-                var userPhone = new string(user.PhoneNumber.Where(char.IsDigit).ToArray());
-                if (enteredPhone != userPhone)
-                {
-                    user.PhoneNumber = enteredPhone;
-                    await _userManager.UpdateAsync(user);
-                }
-                
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
             }
-            
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
-            ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
-            return View(product);
-        }
 
-        // GET: Product/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id is null)
+            var user = await _userManager.GetUserAsync(User);
+            var enteredPhone = new string(form["sellerPhone"].ToString().Where(char.IsDigit).ToArray());
+            var userPhone = new string(user.PhoneNumber.Where(char.IsDigit).ToArray());
+            if (enteredPhone != userPhone)
             {
-                return NotFound();
+                user.PhoneNumber = enteredPhone;
+                await _userManager.UpdateAsync(user);
             }
 
-            var product = await _context.Products.Include(p => p.Filters)
-                .ThenInclude(f => f.FilterDeclaration)
-                .FirstOrDefaultAsync(p => p.Id == id);
-            if (product is null)
-            {
-                return NotFound();
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
-            ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
-            return View(product);
-        }
-        
-        [Authorize]
-        public async Task<IActionResult> Create()
-        {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
-            ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
-            return View(new Product());
-        }
-
-        // POST: Product/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, Product product, string[] leftPhotos, string allPhotos, IFormFile[] photos, IFormCollection form)
-        {
-            if (id != product.Id)
-            {
-                return NotFound();
-            }
-            
-            if (photos.Length + leftPhotos.Length == 0)
-            {
-                ModelState.AddModelError("PhotoUrls", "At least one photo is required");
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    var filterValues = await _context.FilterValues
-                        .Include(fv => fv.FilterDeclaration)
-                        .Where(fv => fv.ProductId == product.Id)
-                        .ToListAsync();
-
-                    foreach (var filterValue in filterValues)
-                    {
-                        if (!form.TryGetValue(filterValue.FilterDeclaration.Name, out var value))
-                        {
-                            continue;
-                        }
-                        
-                        filterValue.Value = value.ToString();
-                        _context.Update(filterValue);
-                    }
-                    
-                    var allPhotoUrls = allPhotos.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
-                    
-                    foreach (var toDelete in allPhotoUrls.Except(leftPhotos))
-                    {
-                        await _photoManager.DeletePhotoAsync(toDelete[1..]);
-                    }
-                    
-                    product.PhotoUrls = new string[photos.Length + leftPhotos.Length];
-                    
-                    for (int i = 0; i < leftPhotos.Length; i++)
-                    {
-                        product.PhotoUrls[i] = leftPhotos[i];
-                    }
-                    
-                    for (int i = 0; i < photos.Length; i++)
-                    {
-                        string url = await _photoManager.SavePhotoAsync(photos[i]);
-                        product.PhotoUrls[i + leftPhotos.Length] ="/" + url.Replace("\\", "/");
-                    }
-                    
-                    product.UpdatedAt = DateTime.Now;
-                    
-                    var user = await _userManager.GetUserAsync(User);
-                    var enteredPhone = new string(form["sellerPhone"].ToString().Where(char.IsDigit).ToArray());
-                    if (user.PhoneNumber is null || new string(user.PhoneNumber.Where(char.IsDigit).ToArray()) != enteredPhone)
-                    {
-                        user.PhoneNumber = enteredPhone;
-                        await _userManager.UpdateAsync(user);
-                    }
-                    
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-
-                    throw;
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            product.PhotoUrls = allPhotos.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["PriceType"] = Enum.GetValues<PriceType>().Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
-            ViewData["ItemState"] = Enum.GetValues<ItemState>().Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
-            return View(product);
-        }
-
-        // GET: Product/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id is null)
-            {
-                return NotFound();
-            }
-
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.Owner)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product is null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
-        }
-
-        // POST: Product/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-
+            _context.Add(product);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Product/5
-        // Product details for users placeholder
-        [Route("Product/{id:int:min(1)}")]
-        public async Task<IActionResult> UserView(int? id)
+        ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+        ViewData["PriceType"] = Enum.GetValues<PriceType>()
+            .Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
+        ViewData["ItemState"] = Enum.GetValues<ItemState>()
+            .Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
+        return View(product);
+    }
+
+    // GET: Product/Edit/5
+    public async Task<IActionResult> Edit(int? id)
+    {
+        if (id is null)
         {
-            if (id is null)
-            {
-                return NotFound();
-            }
-            
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .Include(p => p.Owner)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (product is null)
-            {
-                return NotFound();
-            }
-            
-            return View(product);
+            return NotFound();
         }
 
-        private bool ProductExists(int id)
+        var product = await _context.Products.Include(p => p.Filters)
+            .ThenInclude(f => f.FilterDeclaration)
+            .FirstOrDefaultAsync(p => p.Id == id);
+        if (product is null)
         {
-            return _context.Products.Any(e => e.Id == id);
+            return NotFound();
         }
 
-        [HttpPost]
-        [Authorize]
-        public async Task<IActionResult> ToggleFavorite(int? id)
+        ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+        ViewData["PriceType"] = Enum.GetValues<PriceType>()
+            .Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
+        ViewData["ItemState"] = Enum.GetValues<ItemState>()
+            .Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
+        return View(product);
+    }
+
+    [Authorize]
+    public async Task<IActionResult> Create()
+    {
+        ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+        ViewData["PriceType"] = Enum.GetValues<PriceType>()
+            .Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
+        ViewData["ItemState"] = Enum.GetValues<ItemState>()
+            .Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
+        return View(new Product());
+    }
+
+    // POST: Product/Edit/5
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, Product product, string[] leftPhotos, string allPhotos,
+        IFormFile[] photos, IFormCollection form)
+    {
+        if (id != product.Id)
         {
-            if (id is null)
-            {
-                return NotFound();
-            }
-            
-            var product = await _context.Products.FindAsync(id);
-            if (product is null)
-            {
-                return NotFound();
-            }
-            
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _context.Users.Include(u => u.Favorites)
-                .FirstOrDefaultAsync(u => u.Id == userId);
-            if (user is null)
-            {
-                return NotFound();
-            }
-
-            if (!user.Favorites.Remove(product))
-            {
-                user.Favorites.Add(product);
-            }
-
-            await _context.SaveChangesAsync();
-            return Ok(new { productId = id, isFavorite = user.Favorites.Contains(product)});
+            return NotFound();
         }
 
-        [Authorize]
-        public async Task<IActionResult> ClearFavorites()
+        if (photos.Length + leftPhotos.Length == 0)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _context.Users.Include(u => u.Favorites)
-                .FirstAsync(u => u.Id == userId);
-            user.Favorites!.Clear();
-            await _context.SaveChangesAsync();
-            return RedirectToAction("FavoriteProducts", "User");
+            ModelState.AddModelError("PhotoUrls", "At least one photo is required");
         }
+
+        if (ModelState.IsValid)
+        {
+            try
+            {
+                var filterValues = await _context.FilterValues
+                    .Include(fv => fv.FilterDeclaration)
+                    .Where(fv => fv.ProductId == product.Id)
+                    .ToListAsync();
+
+                foreach (var filterValue in filterValues)
+                {
+                    if (!form.TryGetValue(filterValue.FilterDeclaration.Name, out var value))
+                    {
+                        continue;
+                    }
+
+                    filterValue.Value = value.ToString();
+                    _context.Update(filterValue);
+                }
+
+                var allPhotoUrls = allPhotos.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var toDelete in allPhotoUrls.Except(leftPhotos))
+                {
+                    await _photoManager.DeletePhotoAsync(toDelete[1..]);
+                }
+
+                product.PhotoUrls = new string[photos.Length + leftPhotos.Length];
+
+                for (int i = 0; i < leftPhotos.Length; i++)
+                {
+                    product.PhotoUrls[i] = leftPhotos[i];
+                }
+
+                for (int i = 0; i < photos.Length; i++)
+                {
+                    string url = await _photoManager.SavePhotoAsync(photos[i]);
+                    product.PhotoUrls[i + leftPhotos.Length] = "/" + url.Replace("\\", "/");
+                }
+
+                product.UpdatedAt = DateTime.Now;
+
+                var user = await _userManager.GetUserAsync(User);
+                var enteredPhone = new string(form["sellerPhone"].ToString().Where(char.IsDigit).ToArray());
+                if (user.PhoneNumber is null ||
+                    new string(user.PhoneNumber.Where(char.IsDigit).ToArray()) != enteredPhone)
+                {
+                    user.PhoneNumber = enteredPhone;
+                    await _userManager.UpdateAsync(user);
+                }
+
+                _context.Update(product);
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductExists(product.Id))
+                {
+                    return NotFound();
+                }
+
+                throw;
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        product.PhotoUrls = allPhotos.Split("\r\n", StringSplitOptions.RemoveEmptyEntries);
+        ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+        ViewData["PriceType"] = Enum.GetValues<PriceType>()
+            .Select(pt => new SelectListItem(pt.ToString(), ((int)pt).ToString()));
+        ViewData["ItemState"] = Enum.GetValues<ItemState>()
+            .Select(its => new SelectListItem(its.ToString(), ((int)its).ToString()));
+        return View(product);
+    }
+
+    // GET: Product/Delete/5
+    public async Task<IActionResult> Delete(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var product = await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Owner)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        return View(product);
+    }
+
+    // POST: Product/Delete/5
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product is not null)
+        {
+            foreach (var photoUrl in product.PhotoUrls)
+            {
+                await _photoManager.DeletePhotoAsync(photoUrl[1..]);
+            }
+
+            _context.Products.Remove(product);
+        }
+
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+
+    // GET: Product/5
+    // Product details for users placeholder
+    [Route("Product/{id:int:min(1)}")]
+    public async Task<IActionResult> UserView(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var product = await _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Owner)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        return View(product);
+    }
+
+    private bool ProductExists(int id)
+    {
+        return _context.Products.Any(e => e.Id == id);
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> ToggleFavorite(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var product = await _context.Products.FindAsync(id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _context.Users.Include(u => u.Favorites)
+            .FirstOrDefaultAsync(u => u.Id == userId);
+        if (user is null)
+        {
+            return NotFound();
+        }
+
+        if (!user.Favorites.Remove(product))
+        {
+            user.Favorites.Add(product);
+        }
+
+        await _context.SaveChangesAsync();
+        return Ok(new { productId = id, isFavorite = user.Favorites.Contains(product) });
+    }
+
+    [Authorize]
+    public async Task<IActionResult> ClearFavorites()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _context.Users.Include(u => u.Favorites)
+            .FirstAsync(u => u.Id == userId);
+        user.Favorites!.Clear();
+        await _context.SaveChangesAsync();
+        return RedirectToAction("FavoriteProducts", "User");
     }
 }

@@ -29,4 +29,6 @@ public class Category
     
     [ValidateNever]
     public List<FilterDeclaration> Filters { get; set; }
+
+    public string? IconUrl { get; set; }
 }
