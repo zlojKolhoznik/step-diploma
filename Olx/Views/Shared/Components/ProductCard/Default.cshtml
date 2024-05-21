@@ -2,7 +2,7 @@
 @model Olx.Models.Product
 
 <div class="product-card m-2" data-id="@Model.Id">
-    <a asp-controller="Product" asp-action="UserView" asp-route-id="@Model.Id">
+    <a asp-controller="Product" asp-action="Card" asp-route-id="@Model.Id">
         <div class="product-card-header">
             <img src="@Model.PhotoUrls.First()" alt="" class="product-image">
             <button class="like-button">

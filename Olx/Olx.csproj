@@ -34,6 +34,10 @@
       <_ContentIncludedByDefault Remove="wwwroot\assets\photos\image_2024-03-27_151452247.png" />
       <_ContentIncludedByDefault Remove="Views\Authorization\Login.cshtml" />
       <_ContentIncludedByDefault Remove="Views\Components\ProductCard\Default.cshtml" />
+      <_ContentIncludedByDefault Remove="wwwroot\lightbox\images\close.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\lightbox\images\loading.gif" />
+      <_ContentIncludedByDefault Remove="wwwroot\lightbox\images\next.png" />
+      <_ContentIncludedByDefault Remove="wwwroot\lightbox\images\prev.png" />
     </ItemGroup>
 
     <ItemGroup>

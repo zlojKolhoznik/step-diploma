@@ -389,7 +389,6 @@ public class ProductController : Controller
 
     // GET: Product/5
     // Product details for users placeholder
-    [Route("Product/{id:int:min(1)}")]
     public async Task<IActionResult> UserView(int? id)
     {
         if (id is null)
@@ -405,6 +404,53 @@ public class ProductController : Controller
         {
             return NotFound();
         }
+
+        return View(product);
+    }
+    
+    // GET: Product/5
+    // Product card
+    [Route("Product/{id:int}")]
+    public async Task<IActionResult> Card(int? id)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var product = await _context.Products
+            .Include(p => p.Category)
+            .ThenInclude(c => c.Parent)
+            .Include(p => p.Owner)
+            .Include(p => p.Filters)
+            .ThenInclude(f => f.FilterDeclaration).Include(product => product.FavoredBy)
+            .FirstOrDefaultAsync(m => m.Id == id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+        
+        List<Category> categoryChain = [];
+        var category = product.Category;
+        while (category is not null)
+        {
+            categoryChain.Add(category);
+            category = category.Parent;
+        }
+        
+        var suggestedProducts = await _context.Products
+            .Include(p => p.Owner)
+            .Include(p => p.FavoredBy)
+            .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id)
+            .OrderByDescending(p => Guid.NewGuid())
+            .Take(4)
+            .ToListAsync();
+        
+        ViewData["SuggestedProducts"] = suggestedProducts;
+        ViewData["CategoryChain"] = categoryChain;
+        ViewData["IsFavorite"] = User.Identity.IsAuthenticated 
+                                 && product.FavoredBy is not null 
+                                 && product.FavoredBy.Any(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
 
         return View(product);
     }
