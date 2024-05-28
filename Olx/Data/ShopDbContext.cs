@@ -16,6 +16,8 @@ public class ShopDbContext : IdentityDbContext<User>
     
     public DbSet<Message> Messages { get; set; }
     
+    public DbSet<Order> Orders { get; set; }
+    
     public ShopDbContext(DbContextOptions<ShopDbContext> options) : base(options)
     {
         
@@ -52,5 +54,11 @@ public class ShopDbContext : IdentityDbContext<User>
 
         modelBuilder.Entity<Product>().HasOne<User>(p => p.Owner)
             .WithMany(u => u.Products);
+
+        modelBuilder.Entity<Order>().HasOne<Product>(o => o.Product)
+            .WithMany(p => p.Orders).OnDelete(DeleteBehavior.NoAction);
+        
+        modelBuilder.Entity<Order>().HasOne<User>(o => o.Buyer)
+            .WithMany(u => u.Orders).OnDelete(DeleteBehavior.NoAction);
     }
 }

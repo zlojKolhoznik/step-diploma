@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Olx.Data;
 
@@ -11,9 +12,11 @@ using Olx.Data;
 namespace Olx.Migrations
 {
     [DbContext(typeof(ShopDbContext))]
-    partial class ShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240528085458_AddedOrder")]
+    partial class AddedOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -384,9 +387,6 @@ namespace Olx.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DeliveryMethod")
-                        .HasColumnType("int");
-
                     b.Property<bool>("IsPaymentCompleted")
                         .HasColumnType("bit");
 
@@ -411,9 +411,6 @@ namespace Olx.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ReceiverPatronymyc")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("ReceiverPhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -422,6 +419,9 @@ namespace Olx.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ReceiverZipCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ReciverPatronymyc")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("State")

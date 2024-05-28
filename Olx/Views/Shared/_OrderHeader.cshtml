@@ -1,0 +1,50 @@
+﻿@model Olx.ViewModels.OrderViewModel
+
+<div class="order-header w-100 d-flex justify-content-center align-items-center py-5 row" style="background: var(--white-color);">
+    <div class="links col-12 d-flex gap-2 flex-row-reverse align-items-center justify-content-end mb-4">
+        <span>@Model.Title</span>
+        <img src="~/assets/icons/arrow.svg"/>
+        @foreach (var category in Model.Categories)
+        {
+        <a href="/">@category.Name</a>
+        <img src="~/assets/icons/arrow.svg"/>
+        }
+        <a asp-controller="Home" asp-action="Index">Головна</a>
+    </div>
+    <div class="d-flex w-100 justify-content-center">
+        <div class="logo-order">
+            <svg width="236" height="200" viewBox="0 0 236 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M20 0C8.95431 0 0 8.95431 0 20L0 180C0 191.046 8.95431 200 20 200L196 200C198.209 200 200 198.209 200 196V136C219.882 136 236 119.882 236 100C236 80.1178 219.882 64 200 64V4C200 1.79086 198.209 0 196 0L20 0Z" fill="#19A896"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M86.2017 69.6505C86.2017 62.1115 92.3132 56 99.8522 56C107.391 56 113.503 62.1115 113.503 69.6505V72.2003H86.2017V69.6505ZM80.2017 78.2003V86.301C80.2017 87.9578 81.5448 89.301 83.2017 89.301C84.8585 89.301 86.2017 87.9578 86.2017 86.301V78.2003H113.503V86.301C113.503 87.9578 114.846 89.301 116.503 89.301C118.159 89.301 119.503 87.9578 119.503 86.301V78.2003H130.374L135.463 144.352H64.2396L69.3283 78.2003H80.2017ZM80.2017 72.2003V69.6505C80.2017 58.7978 88.9995 50 99.8522 50C110.705 50 119.503 58.7978 119.503 69.6505V72.2003H133.152C134.72 72.2003 136.023 73.4072 136.143 74.9702L141.693 147.122C141.757 147.955 141.471 148.778 140.903 149.391C140.336 150.004 139.538 150.352 138.702 150.352H61C60.1644 150.352 59.3666 150.004 58.7988 149.391C58.2311 148.778 57.9448 147.955 58.0088 147.122L63.559 74.9702C63.6792 73.4072 64.9826 72.2003 66.5502 72.2003H80.2017Z" fill="#F8F8F8"/>
+            </svg>
+        </div>
+        <div class="order-info">
+            <div class="white-semi-circle"></div>
+            <div class="red-semi-circle"></div>
+            <div class="light-semi-circle"></div>
+            <div class="top-red-filler"></div>
+            <div class="bottom-red-filler"></div>
+            <div class="image-container">
+                <img src="@Model.Order.Product.PhotoUrls[0]" alt="@Model.Order.Product.Name"/>
+            </div>
+            <div class="order-details">
+                <div class="d-flex justify-content-between w-100">
+                    <div class="order-title">
+                        <h3>@Model.Order.Product.Name</h3>
+                        <p id="city"></p>
+                    </div>
+                    <div class="order-state">
+                        @Html.DisplayFor(m => m.Order.Product.ItemState)
+                    </div>
+                </div>
+                <div class="d-flex justify-content-between align-items-center w-100">
+                    <div class="order-price">
+                        <h4>@Model.Order.Product.Price грн.</h4>
+                    </div>
+                    <div>
+                        Моя покупка
+                    </div>
+                </div>
+            </div>
+        </div></div>
+</div>

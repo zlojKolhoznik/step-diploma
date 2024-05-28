@@ -55,4 +55,6 @@ public class Product
     
     [ValidateNever]
     public List<User>? FavoredBy { get; set; }
+    
+    public List<Order>? Orders { get; set; }
 }

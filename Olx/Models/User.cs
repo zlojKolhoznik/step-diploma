@@ -19,4 +19,7 @@ public class User : IdentityUser
     
     [ValidateNever]
     public List<Product>? Products { get; set; }
+    
+    [ValidateNever]
+    public List<Order>? Orders { get; set; }
 }
