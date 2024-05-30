@@ -1,0 +1,135 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Olx.Models
+@model Olx.Models.Order
+@inject UserManager<User> UserManager
+
+@{
+    ViewBag.Title = "Оплата";
+    Layout = "_Layout";
+}
+
+@await Html.PartialAsync("_OrderHeader", model: ViewBag.OrderViewModel as Olx.ViewModels.OrderViewModel)
+
+<div asp-validation-summary="All" style="background: var(--white-color); color:  var(--red-color)"></div>
+
+<form method="post" class="d-flex justify-content-center gap-5 order-container">
+    <input type="hidden" name="productCityId" id="productCityId" value="@Model.Product.City">
+    <div class="methods">
+        <h3 class="title">Оберіть спосіб оплати</h3>
+        <label for="byCard">
+            <div class="method-container">
+                <div class="method-input-wrapper">
+                    <input type="radio" name="paymentMethod" id="byCard" class="delivery-method"
+                           value="card" checked="checked" data-price="@Model.Product.Price">
+                </div>
+                <div class="d-flex justify-content-between w-100">
+                    <div class="method-description">
+                        <h4 class="method-title">Карткою онлайн</h4>
+                        <p class="method-price">@Model.Product.Price грн.</p>
+                    </div>
+                </div>
+            </div>
+        </label>
+        <label for="prepayment">
+            <div class="method-container">
+                <div class="method-input-wrapper">
+                    <input type="radio" name="paymentMethod" id="prepayment" class="delivery-method"
+                           value="prepayment" data-price="@(Model.Product.Price * .02 + 20)">
+                </div>
+                <div class="d-flex justify-content-between w-100">
+                    <div class="method-description">
+                        <h4 class="method-title">Післяплата з передплатою</h4>
+                        <p class="method-price">@(Model.Product.Price * .02 + 20) грн.</p>
+                        <p class="method-text">2% від вартості вантажу + 20 грн.</p>
+                    </div>
+                </div>
+            </div>
+        </label>
+        <label for="epay">
+            <div class="method-container">
+                <div class="method-input-wrapper">
+                    <input type="radio" name="paymentMethod" id="epay" class="delivery-method"
+                           value="epay" data-price="@Model.Product.Price">
+                </div>
+                <div class="d-flex justify-content-between w-100">
+                    <div class="method-description">
+                        <h4 class="method-title">Електронний гаманець</h4>
+                        <p class="method-price">@Model.Product.Price грн.</p>
+                        <div class="method-logo">
+                            <img src="~/assets/icons/Apple_Pay_logo.svg" alt="Epay">
+                            <img src="~/assets/icons/Google_Pay_Logo.svg" alt="Epay">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </label>
+        <label for="inWarehouse">
+            <div class="method-container">
+                <div class="method-input-wrapper">
+                    <input type="radio" name="paymentMethod" id="inWarehouse" class="delivery-method"
+                           value="inWarehouse" data-price="0">
+                </div>
+                <div class="d-flex justify-content-between w-100">
+                    <div class="method-description">
+                        <h4 class="method-title">Готівкою при отриманні</h4>
+                        <p class="method-price">0 грн.</p>
+                    </div>
+                </div>
+            </div>
+        </label>
+    </div>
+    <div class="methods">
+        <h3 class="title">Вкажіть дані для оплати</h3>
+        <div class="form-group mb-3">
+            <label for="cardNumber">Номер картки*</label>
+            <input type="text" name="cardNumber" class="order-input" id="cardNumber" placeholder="XXXX XXXX XXXX XXXX">
+        </div>
+        <div class="form-group mb-3">
+            <label for="cardExpirationDate">Строк картки*</label>
+            <input type="text" name="cardExpirationDate" class="order-input" id="cardExpirationDate" placeholder="мм/рр">
+        </div>
+        <div class="form-group mb-3">
+            <label for="cardCvv">CVV*</label>
+            <input type="text" name="cardCvv" class="order-input" id="cardCvv" placeholder="XXX">
+        </div>
+        <p class="required-fields">* позначені поля обов'язкові для заповнення</p>
+        <div class="payment-info">
+            <h5 class="payment-info-title">Важливо!</h5>
+            <p class="payment-info-text">
+                Натискаючи кнопку "Сплатити", ви погоджуєтеся з умовами надання сервісу, політикою конфіденційності та умовами використання BUYSELL Доставка.
+                Після успішної оплати ви отримаєте повідомлення на вашу електронну пошту (ту, що ви вказували при заповненні деталей доставки).
+            </p>
+            <h4 class="payment-info-subtitle">Платежі захищені</h4>
+            <div class="payment-info-image-container">
+                <img src="~/assets/icons/payment-protection.svg" alt="Payment protection" class="payment-info-image">
+            </div>
+        </div>
+        <input type="submit" name="submit" id="orderButton" class="order-button" value="Сплатити @Model.Product.Price грн.">
+    </div>
+    <input type="hidden" name="productId" value="@Model.Product.Id">
+    <input type="hidden" asp-for="BuyerId" value="@UserManager.GetUserId(User)">
+</form>
+<div class="advert">
+    <div class="advert-position">
+        <div class="numeric-advert">100%</div>
+        <div class="advert-text">гарантія захищеності<br/>ваших даних</div>
+    </div>
+    <div class="ampersand">&</div>
+    <div class="advert-position">
+        <div class="numeric-advert">2,5 млн</div>
+        <div class="advert-text">успішних оплат</div>
+    </div>
+</div>
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/order-header.css" />
+    <link rel="stylesheet" href="~/css/order.css" />
+}
+
+@section Scripts
+{
+    <script src="~/js/order-header.js"></script>
+    <script src="~/js/order.js"></script>
+}

@@ -1,17 +1,17 @@
 ﻿@model Olx.ViewModels.OrderViewModel
 
-<div class="order-header w-100 d-flex justify-content-center align-items-center py-5 row" style="background: var(--white-color);">
-    <div class="links col-12 d-flex gap-2 flex-row-reverse align-items-center justify-content-end mb-4">
+<div class="order-header d-flex justify-content-center align-items-center py-5 flex-column" style="background: var(--white-color);">
+    <div class="links w-100 d-flex gap-2 flex-row-reverse align-items-center justify-content-end mb-4">
         <span>@Model.Title</span>
         <img src="~/assets/icons/arrow.svg"/>
         @foreach (var category in Model.Categories)
         {
-        <a href="/">@category.Name</a>
-        <img src="~/assets/icons/arrow.svg"/>
+            <a href="/">@category.Name</a>
+            <img src="~/assets/icons/arrow.svg"/>
         }
         <a asp-controller="Home" asp-action="Index">Головна</a>
     </div>
-    <div class="d-flex w-100 justify-content-center">
+    <div class="d-flex justify-content-center w-100">
         <div class="logo-order">
             <svg width="236" height="200" viewBox="0 0 236 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M20 0C8.95431 0 0 8.95431 0 20L0 180C0 191.046 8.95431 200 20 200L196 200C198.209 200 200 198.209 200 196V136C219.882 136 236 119.882 236 100C236 80.1178 219.882 64 200 64V4C200 1.79086 198.209 0 196 0L20 0Z" fill="#19A896"/>

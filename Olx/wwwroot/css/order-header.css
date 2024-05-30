@@ -1,4 +1,8 @@
-﻿.order-info {
+﻿html, body {
+    overflow-x: hidden;
+}
+
+.order-info {
     display: flex;
     justify-content: space-between;
     width: 35%;
@@ -116,4 +120,8 @@
 
 .links a:hover {
     color: var(--black-color);
+}
+
+.order-header {
+    width: 100vw;
 }

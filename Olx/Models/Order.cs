@@ -1,15 +1,21 @@
-﻿namespace Olx.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+
+namespace Olx.Models;
 
 public class Order
 {
+    [Key]
     public int Id { get; set; }
 
     public int ProductId { get; set; }
 
+    [ValidateNever]
     public Product Product { get; set; }
-
+    
     public string BuyerId { get; set; }
     
+    [ValidateNever]
     public User Buyer { get; set; }
 
     public bool IsPaymentCompleted { get; set; }
@@ -30,7 +36,7 @@ public class Order
     
     public string ReceiverPhoneNumber { get; set; }
     
-    public string? ReceiverEmail { get; set; }
+    public string ReceiverEmail { get; set; }
 
     public string ReceiverCity { get; set; }
     

@@ -1,144 +1,146 @@
-﻿@using Olx.Models
+﻿@using Microsoft.AspNetCore.Identity
+@using Olx.Models
 @model Olx.Models.Order
+@inject UserManager<User> UserManager
 
 @{
-    ViewBag.Title = "title";
+    ViewBag.Title = "Деталі доставки";
     Layout = "_Layout";
 }
 
 
 @await Html.PartialAsync("_OrderHeader", model: ViewBag.OrderViewModel as Olx.ViewModels.OrderViewModel)
 
-<div class="order-container">
-    <form method="post" class="d-flex justify-content-between gap-5">
-        <input type="hidden" id="productCityId" value="@Model.Product.City">
-        <div class="methods">
-            <h3 class="title">Оберіть доставку</h3>
-            <label for="novaPostWarehouse">
-                <div class="method-container">
-                    <div class="method-input-wrapper">
-                        <input type="radio" name="delivery-method" id="novaPostWarehouse" class="delivery-method"
-                               value="@DeliveryMethod.NovaPostWarehouse.GetHashCode()" checked="checked">
+<form method="post" asp-action="Delivery" class="d-flex justify-content-center gap-5 order-container">
+    <input type="hidden" name="productCityId" id="productCityId" value="@Model.Product.City">
+    <div class="methods">
+        <h3 class="title">Оберіть доставку</h3>
+        <label for="novaPostWarehouse">
+            <div class="method-container">
+                <div class="method-input-wrapper">
+                    <input type="radio" name="deliveryMethod" id="novaPostWarehouse" class="delivery-method"
+                           value="@DeliveryMethod.NovaPostWarehouse.GetHashCode()" checked="checked">
+                </div>
+                <div class="d-flex justify-content-between">
+                    <div class="method-description">
+                        <h4 class="method-title">У відділення Нова Пошта</h4>
+                        <p class="method-text">Доставка протягом 1 - 2 днів</p>
+                        <p class="method-price">від 50 грн.</p>
                     </div>
-                    <div class="d-flex justify-content-between">
-                        <div class="method-description">
-                            <h4 class="method-title">У відділення Нова Пошта</h4>
-                            <p class="method-text">Доставка протягом 1 - 2 днів</p>
-                            <p class="method-price">від 50 грн.</p>
-                        </div>
-                        <div class="method-logo">
-                            <img src="~/assets/icons/nova-post-logo.png" alt="Nova Post">
-                        </div>
+                    <div class="method-logo">
+                        <img src="~/assets/icons/nova-post-logo.png" alt="Nova Post">
                     </div>
                 </div>
-            </label>
-            <label for="novaPostCourier">
-                <div class="method-container">
-                    <div class="method-input-wrapper">
-                        <input type="radio" name="delivery-method" id="novaPostCourier" class="delivery-method"
-                               value="@DeliveryMethod.NovaPostCourier.GetHashCode()">
+            </div>
+        </label>
+        <label for="novaPostCourier">
+            <div class="method-container">
+                <div class="method-input-wrapper">
+                    <input type="radio" name="deliveryMethod" id="novaPostCourier" class="delivery-method"
+                           value="@DeliveryMethod.NovaPostCourier.GetHashCode()">
+                </div>
+                <div class="d-flex justify-content-between w-100">
+                    <div class="method-description">
+                        <h4 class="method-title">Кур'єром Нова Пошта</h4>
+                        <p class="method-text">Доставка протягом 1 - 2 днів</p>
+                        <p class="method-price">від 85 грн.</p>
                     </div>
-                    <div class="d-flex justify-content-between w-100">
-                        <div class="method-description">
-                            <h4 class="method-title">Кур'єром Нова Пошта</h4>
-                            <p class="method-text">Доставка протягом 1 - 2 днів</p>
-                            <p class="method-price">від 85 грн.</p>
-                        </div>
-                        <div class="method-logo">
-                            <img src="~/assets/icons/nova-post-logo.png" alt="Nova Post">
-                        </div>
+                    <div class="method-logo">
+                        <img src="~/assets/icons/nova-post-logo.png" alt="Nova Post">
                     </div>
                 </div>
-            </label>
-            <label for="ukrposhtaWarehouse">
-                <div class="method-container">
-                    <div class="method-input-wrapper">
-                        <input type="radio" name="delivery-method" id="ukrposhtaWarehouse" class="delivery-method"
-                               value="@DeliveryMethod.UkrPoshta.GetHashCode()">
+            </div>
+        </label>
+        <label for="ukrposhtaWarehouse">
+            <div class="method-container">
+                <div class="method-input-wrapper">
+                    <input type="radio" name="deliveryMethod" id="ukrposhtaWarehouse" class="delivery-method"
+                           value="@DeliveryMethod.UkrPoshta.GetHashCode()">
+                </div>
+                <div class="d-flex justify-content-between w-100">
+                    <div class="method-description">
+                        <h4 class="method-title">У відділення Укрпошта</h4>
+                        <p class="method-text">Доставка протягом 3 - 6 днів</p>
+                        <p class="method-price">від 40 грн.</p>
                     </div>
-                    <div class="d-flex justify-content-between w-100">
-                        <div class="method-description">
-                            <h4 class="method-title">У відділення Укрпошта</h4>
-                            <p class="method-text">Доставка протягом 3 - 6 днів</p>
-                            <p class="method-price">від 40 грн.</p>
-                        </div>
-                        <div class="method-logo">
-                            <img src="~/assets/icons/ukrposhta-logo.png" alt="Ukrposhta">
-                        </div>
+                    <div class="method-logo">
+                        <img src="~/assets/icons/ukrposhta-logo.png" alt="Ukrposhta">
                     </div>
                 </div>
-            </label>
-            <label for="meestWarehouse">
-                <div class="method-container">
-                    <div class="method-input-wrapper">
-                        <input type="radio" name="delivery-method" id="meestWarehouse" class="delivery-method"
-                               value="@DeliveryMethod.MeestWarehouse.GetHashCode()">
+            </div>
+        </label>
+        <label for="meestWarehouse">
+            <div class="method-container">
+                <div class="method-input-wrapper">
+                    <input type="radio" name="deliveryMethod" id="meestWarehouse" class="delivery-method"
+                           value="@DeliveryMethod.MeestWarehouse.GetHashCode()">
+                </div>
+                <div class="d-flex justify-content-between w-100">
+                    <div class="method-description">
+                        <h4 class="method-title">У відділення MEEST</h4>
+                        <p class="method-text">Доставка протягом 2 - 5 днів</p>
+                        <p class="method-price">від 30 грн.</p>
                     </div>
-                    <div class="d-flex justify-content-between w-100">
-                        <div class="method-description">
-                            <h4 class="method-title">У відділення MEEST</h4>
-                            <p class="method-text">Доставка протягом 2 - 5 днів</p>
-                            <p class="method-price">від 30 грн.</p>
-                        </div>
-                        <div class="method-logo">
-                            <img src="~/assets/icons/meest-logo.png" alt="MEEST">
-                        </div>
+                    <div class="method-logo">
+                        <img src="~/assets/icons/meest-logo.png" alt="MEEST">
                     </div>
                 </div>
-            </label>
-            <label for="meestCourier">
-                <div class="method-container">
-                    <div class="method-input-wrapper">
-                        <input type="radio" name="delivery-method" id="meestCourier" class="delivery-method"
-                               value="@DeliveryMethod.MeestCourier.GetHashCode()">
+            </div>
+        </label>
+        <label for="meestCourier">
+            <div class="method-container">
+                <div class="method-input-wrapper">
+                    <input type="radio" name="deliveryMethod" id="meestCourier" class="delivery-method"
+                           value="@DeliveryMethod.MeestCourier.GetHashCode()">
+                </div>
+                <div class="d-flex justify-content-between w-100">
+                    <div class="method-description">
+                        <h4 class="method-title">Кур'єром MEEST</h4>
+                        <p class="method-text">Доставка протягом 2 - 5 днів</p>
+                        <p class="method-price">від 65 грн.</p>
                     </div>
-                    <div class="d-flex justify-content-between w-100">
-                        <div class="method-description">
-                            <h4 class="method-title">Кур'єром MEEST</h4>
-                            <p class="method-text">Доставка протягом 2 - 5 днів</p>
-                            <p class="method-price">від 65 грн.</p>
-                        </div>
-                        <div class="method-logo">
-                            <img src="~/assets/icons/meest-logo.png" alt="MEEST">
-                        </div>
+                    <div class="method-logo">
+                        <img src="~/assets/icons/meest-logo.png" alt="MEEST">
                     </div>
                 </div>
-            </label>
+            </div>
+        </label>
+    </div>
+    <div class="methods">
+        <h3 class="title">Заповніть контактні дані отримувача</h3>
+        <div class="form-group">
+            <input asp-for="ReceiverName" class="order-input" placeholder="Ім'я*" required>
         </div>
-        <div class="methods">
-            <h3 class="title">Заповніть контактні дані отримувача</h3>
-            <div class="form-group">
-                <input asp-for="ReceiverName" class="order-input" placeholder="Ім'я*" required>
-            </div>
-            <div class="form-group">
-                <input asp-for="ReceiverLastName" class="order-input" placeholder="Прізвище*" required>
-            </div>
-            <div class="form-group">
-                <input asp-for="ReceiverPatronymyc" class="order-input" placeholder="По батькові">
-            </div>
-            <div class="form-group">
-                <input asp-for="ReceiverPhoneNumber" class="order-input" placeholder="Номер телефону*" required>
-            </div>
-            <div class="form-group">
-                <input asp-for="ReceiverEmail" class="order-input" placeholder="Email">
-            </div>
-            <div class="form-group">
-                <input asp-for="ReceiverCity" class="order-input" placeholder="Місто*" required>
-            </div>
-            <div class="form-group">
-                <input asp-for="ReceiverWarehouse" class="order-input" placeholder="Відділення">
-            </div>
-            <div class="form-group hidden">
-                <input asp-for="ReceiverAddress" class="order-input" placeholder="Адреса">
-            </div>
-            <div class="form-group hidden">
-                <input asp-for="ReceiverZipCode" class="order-input" placeholder="Індекс">
-            </div>
-            <p class="required-fields">* позначені поля обов'язкові для заповнення</p>
-            <button type="submit" class="order-button">Далі</button>
+        <div class="form-group">
+            <input asp-for="ReceiverLastName" class="order-input" placeholder="Прізвище*" required>
         </div>
-    </form>
-</div>
+        <div class="form-group">
+            <input asp-for="ReceiverPatronymyc" class="order-input" placeholder="По батькові">
+        </div>
+        <div class="form-group">
+            <input asp-for="ReceiverPhoneNumber" class="order-input" placeholder="Номер телефону*" required>
+        </div>
+        <div class="form-group">
+            <input asp-for="ReceiverEmail" class="order-input" placeholder="Email*" required>
+        </div>
+        <div class="form-group">
+            <input asp-for="ReceiverCity" class="order-input" placeholder="Місто*" required>
+        </div>
+        <div class="form-group">
+            <input asp-for="ReceiverWarehouse" class="order-input" placeholder="Відділення">
+        </div>
+        <div class="form-group hidden">
+            <input asp-for="ReceiverAddress" class="order-input" placeholder="Адреса">
+        </div>
+        <div class="form-group hidden">
+            <input asp-for="ReceiverZipCode" class="order-input" placeholder="Індекс">
+        </div>
+        <p class="required-fields">* позначені поля обов'язкові для заповнення</p>
+        <input type="submit" class="order-button" value="Далі">
+    </div>
+    <input type="hidden" name="productId" value="@Model.Product.Id">
+    <input type="hidden" asp-for="BuyerId" value="@UserManager.GetUserId(User)">
+</form>
 <div class="advert">
     <div class="advert-position">
         <div class="numeric-advert">100%</div>

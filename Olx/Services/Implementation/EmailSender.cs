@@ -20,7 +20,7 @@ public class EmailSender : IEmailSender
     public async Task SendEmailAsync(string email, string subject, string htmlMessage)
     {
         var mime = new MimeMessage();
-        mime.From.Add(new MailboxAddress("Mekafi noreply", _configuration["EmailSender:Email"]));
+        mime.From.Add(new MailboxAddress("BUYSELL noreply", _configuration["EmailSender:Email"]));
         var user = await _userManager.FindByEmailAsync(email);
         if (user is null)
         {
