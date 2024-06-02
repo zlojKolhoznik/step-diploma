@@ -43,6 +43,20 @@ public class AuthenticationController : Controller
 
         var returnUrl = vm.ReturnUrl ?? Url.Content("~/");
         
+        var user = await _userManager.FindByEmailAsync(vm.Username);
+        if (user is null)
+        {
+            ModelState.AddModelError("", "Невірний логін або пароль.");
+            ViewData["Error"] = "Невірний логін або пароль.";
+            return View(vm);
+        }
+
+        if (user.PasswordHash is null)
+        {
+            ViewData["Error"] = "Ви вже зареєстровані через соціальну мережу. Спробуйте увійти через неї та встановити пароль в налаштуваннях.";
+            return View(vm);
+        }
+        
         var result = await _signInManager.PasswordSignInAsync(vm.Username, vm.Password, vm.IsPersistent, lockoutOnFailure: false);
         if (result.Succeeded)
         {
@@ -125,7 +139,19 @@ public class AuthenticationController : Controller
         }
         
         // Sign in the user with this external login provider if the user already has a login or register new user
-        var user = await _signInManager.UserManager.FindByEmailAsync(email) ?? new User { UserName = email, Email = email };
+        var user = await _signInManager.UserManager.FindByEmailAsync(email);
+        if (user is null)
+        {
+            var name = info.Principal.FindFirstValue(ClaimTypes.Name);
+            user = new User { UserName = email, Email = email, Name = name };
+            var registrationResult = await _userManager.CreateAsync(user);
+            if (!registrationResult.Succeeded)
+            {
+                ViewData["Error"] = "Помилка при реєстрації.";
+                return LocalRedirect(returnUrl);
+            }
+        }
+        
         await _userManager.AddLoginAsync(user, info);
         var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: true);
         if (result.Succeeded)

@@ -37,7 +37,7 @@
             </div>
             <div class="drop-menu hidden">
                 <div class="drop-header">
-                    @if (SignInManager.IsSignedIn(User))
+                    @if (SignInManager.IsSignedIn(User) && user is not null)
                     {
                         <a asp-area="Identity" asp-page="/Account/Manage/Index">@(user.Name ?? user.Email)</a>
                     }
@@ -46,7 +46,7 @@
                         <a asp-action="Login" asp-controller="Authentication">Вхід</a>
                     }
                 </div>
-                @if (SignInManager.IsSignedIn(User))
+                @if (SignInManager.IsSignedIn(User) && user is not null)
                 {
                     <hr/>
                     <div class="drop-item">
