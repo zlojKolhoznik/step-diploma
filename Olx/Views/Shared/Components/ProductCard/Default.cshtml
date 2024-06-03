@@ -37,6 +37,7 @@
             <div class="product-card-content-title">@(Model.Name.Length > 45 ? Model.Name[..45] + "..." : Model.Name)</div>
             <div class="product-card-content-info">
                 <div class="state">@Html.DisplayFor(p => p.ItemState)</div>
+                <div class="price">@Model.Price.ToString() грн.</div>
             </div>
         </div>
     </a>

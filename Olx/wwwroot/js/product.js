@@ -2,7 +2,7 @@
     e.preventDefault();
     let container = $(e.target).parent().parent();
     if (e.target.tagName === 'I') {
-        container = container.parent(); // if the button is clicked, the target is the icon, so we need to go one level up
+        container = container.parent(); // if the button is clicked and the target is the icon, we need to go one level up
     }
     let panel = container.parent();
     container.remove();
@@ -34,12 +34,10 @@ function photoUploadHandler(e) {
             let container = $(input).parent().next();
             let img = $(input).siblings('img');
             img.attr('src', e.target.result);
-            // img.attr('style', 'width: 98px; height: 98px; margin: 0; border-radius: 5px;');
             $(input).parent().removeClass('photo-input-container').addClass('photo-container has-photo');
             $(input).parent().on('click', null);
             $(input).siblings('img').on('click', null);
             container.removeClass('photo-container').addClass('photo-input-container');
-            // container.children('img').attr('src', '/assets/icons/free-icon-camera-7708970.png');
             container.on('click', (e) => {
                 $(e.target).children('input').trigger('click');
             });
@@ -79,7 +77,6 @@ function getCityNameByRef(ref) {
 
 function cityInputChanged(e) {
     let city = $(e.target).val();
-    $('input[name="City"]').val('');
     if (city.length < 3) {
         $('.suggestions').empty();
         return;
@@ -90,6 +87,9 @@ function cityInputChanged(e) {
         success: data => {
             let suggestions = $('.suggestions');
             suggestions.empty();
+            if (!$(e.target).is(':focus')) {
+                return;
+            }
             if (data.length === 0) {
                 suggestions.append('<div style="color: var(--red-accent-color);">No suggestions found</div>');
             }

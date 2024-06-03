@@ -198,12 +198,10 @@ public class ProductController : Controller
 
             var user = await _userManager.GetUserAsync(User);
             var enteredPhone = new string(form["sellerPhone"].ToString().Where(char.IsDigit).ToArray());
-            var userPhone = new string(user.PhoneNumber.Where(char.IsDigit).ToArray());
-            if (enteredPhone != userPhone)
-            {
-                user.PhoneNumber = enteredPhone;
-                await _userManager.UpdateAsync(user);
-            }
+            user!.PhoneNumber = user.PhoneNumber is not null
+                ? new string(user.PhoneNumber.Where(char.IsDigit).ToArray())
+                : enteredPhone;
+            _context.Users.Update(user);
 
             _context.Add(product);
             await _context.SaveChangesAsync();
@@ -422,6 +420,7 @@ public class ProductController : Controller
             .Include(p => p.Category)
             .ThenInclude(c => c.Parent)
             .Include(p => p.Owner)
+            .ThenInclude(u => u.Products)
             .Include(p => p.Filters)
             .ThenInclude(f => f.FilterDeclaration).Include(product => product.FavoredBy)
             .FirstOrDefaultAsync(m => m.Id == id);
@@ -441,9 +440,9 @@ public class ProductController : Controller
         var suggestedProducts = await _context.Products
             .Include(p => p.Owner)
             .Include(p => p.FavoredBy)
-            .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id)
+            .Where(p => p.Id != product.Id)
             .OrderByDescending(p => Guid.NewGuid())
-            .Take(4)
+            .Take(6)
             .ToListAsync();
         
         ViewData["SuggestedProducts"] = suggestedProducts;

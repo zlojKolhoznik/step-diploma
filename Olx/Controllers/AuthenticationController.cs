@@ -1,4 +1,5 @@
-﻿using System.Security.Claims;
+﻿using System.Runtime.Intrinsics.Arm;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Olx.Models;
@@ -46,8 +47,8 @@ public class AuthenticationController : Controller
         var user = await _userManager.FindByEmailAsync(vm.Username);
         if (user is null)
         {
-            ModelState.AddModelError("", "Невірний логін або пароль.");
-            ViewData["Error"] = "Невірний логін або пароль.";
+            ModelState.AddModelError("", "Невірний логін.");
+            ViewData["Error"] = "Невірний логін.";
             return View(vm);
         }
 
@@ -64,8 +65,8 @@ public class AuthenticationController : Controller
             return LocalRedirect(returnUrl);
         }
 
-        ModelState.AddModelError("", "Невірний логін або пароль.");
-        ViewData["Error"] = "Невірний логін або пароль.";
+        ModelState.AddModelError("", "Невірний пароль.");
+        ViewData["Error"] = "Невірний пароль.";
         return View(vm);
     }
     
@@ -90,7 +91,7 @@ public class AuthenticationController : Controller
         }
         
         var returnUrl = vm.ReturnUrl ?? Url.Content("~/");
-        var user = new User { UserName = vm.Email, Email = vm.Email, Name = vm.Name};
+        var user = new User { UserName = vm.Email, Email = vm.Email, Name = vm.Name, EmailConfirmed = true };
         var result = await _userManager.CreateAsync(user, vm.Password);
         if (result.Succeeded)
         {

@@ -19,7 +19,7 @@
             }
             <a asp-controller="Home" asp-action="Index">Головна</a>
         </div>
-        <div class="row mb-5">
+        <div class="row mb-5 view-top">
             <div class="gallery col-6 d-flex flex-row-reverse justify-content-end">
                 <div class="main-image col-10">
                     <a href="@Model.PhotoUrls[0]" data-lightbox="gallery" data-title="@Model.Name">
@@ -179,7 +179,7 @@
     <h1 class="d-flex justify-content-center align-items-center my-4">
         Клієнти також переглядали
     </h1>
-    <div class="justify-content-around d-flex mb-4 gap-3">
+    <div class="justify-content-around d-flex mb-4">
         @foreach (var product in ViewBag.SuggestedProducts)
         {
                 @await Component.InvokeAsync("ProductCard", new { product = product })

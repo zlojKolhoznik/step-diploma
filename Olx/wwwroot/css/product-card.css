@@ -8,6 +8,9 @@
 
 .product-card > a {
     text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 .product-card {
@@ -76,6 +79,8 @@
 .product-card-content {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
 }
 
 .product-card-content-subtitle {
