@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Olx.Data;
+using Olx.ViewModels;
 using WebApplication1.Models;
 
 namespace Olx.Controllers;
@@ -18,8 +19,13 @@ public class HomeController : Controller
 
     public IActionResult Index()
     {
-        var products = _context.Products.ToList();
-        return View(products);
+        return View(new HomeViewModel
+        {
+            UsersCount = _context.Users.Count(),
+            ProductsCount = _context.Products.Count(),
+            Categories = _context.Categories.ToList(),
+            VipProducts = _context.Products.OrderBy(p => Guid.NewGuid()).Take(8).ToList() // Random 8 products. In future, we will change this to VIP products. In real world app, it is better to choose products on user preferences.
+        });
     }
 
     public IActionResult Privacy()

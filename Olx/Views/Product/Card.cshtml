@@ -182,7 +182,7 @@
     <div class="justify-content-around d-flex mb-4">
         @foreach (var product in ViewBag.SuggestedProducts)
         {
-                @await Component.InvokeAsync("ProductCard", new { product = product })
+                @await Component.InvokeAsync("ProductCard", new { product })
         }
     </div>
     <div class="d-flex justify-content-center">

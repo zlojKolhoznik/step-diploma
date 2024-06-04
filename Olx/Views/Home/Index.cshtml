@@ -1,20 +1,104 @@
-﻿@model IEnumerable<Olx.Models.Product>
+﻿@model Olx.ViewModels.HomeViewModel
 
 @{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Головна";
 }
 
 <partial name="_SearchBar"/>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome!</h1>
-    <a asp-controller="Category">Categories</a>
-    <a asp-controller="Product">Products</a>
-    <a asp-controller="Chats">Chats</a>
-    <div class="d-flex flex-wrap overflow-auto">
-        @foreach (var product in Model)
+<div class="white-panel"></div>
+<div class="main-container">
+    <div class="categories">
+        @foreach (var category in Model.Categories)
+        {
+            <!-- in the future, we will change this to a search query for the category -->
+            <a asp-action="Index" class="category">
+                <div class="category-icon">
+                    <img src="@category.IconUrl" alt="@category.Name">
+                </div>
+                <div class="category-name">@category.Name</div>
+            </a>
+        }
+    </div>
+</div>
+<div class="product-suggestions">
+    <h2 class="title"><span>VIP</span> оголошення</h2>
+    <div class="vip-products">
+        @foreach (var product in Model.VipProducts)
         {
             @await Component.InvokeAsync("ProductCard", new { product })
         }
     </div>
 </div>
+<div class="advert">
+    <div class="advert-position">
+        <div class="numeric-advert">@Model.UsersCount</div>
+        <div class="advert-text">користувачів</div>
+    </div>
+    <div class="ampersand">&</div>
+    <div class="advert-position">
+        <div class="numeric-advert">@Model.ProductsCount</div>
+        <div class="advert-text">оголошень</div>
+    </div>
+</div>
+<div class="product-suggestions">
+    <h2 class="title"><span>VIP</span> пакети</h2>
+    <div class="vip-products">
+        <div class="vip-package-card">
+            <div class="package-header">
+                <div class="package-name">Старт</div>
+                <div class="package-discount">-11%</div>
+            </div>
+            <div class="package-description">Ідеально підходить для людей, яким потрібен швидкий доступ до функцій</div>
+            <div class="package-pricing">
+                <div class="price"><span>₴100</span>/місяць</div>
+                <div class="old-price">₴120</div>
+            </div>
+            <button class="green-button" id="startPackageButton">Вибрати</button>
+            <div class="package-benefit accessible">Бізнес-сторінка</div>
+            <div class="package-benefit accessible">Статистика оголошень</div>
+            <div class="package-benefit">Підняття кожного оголошення</div>
+            <div class="package-benefit">Персональний дизайн сторінки</div>
+            <div class="package-benefit">Фільтр оголошень у профілі</div>
+        </div>
+        <div class="vip-package-card">
+            <div class="package-header">
+                <div class="package-name">Преміум</div>
+                <div class="package-discount">-22%</div>
+            </div>
+            <div class="package-description">Ідеально підходить для людей, яким потрібні розширені функції та інструменти</div>
+            <div class="package-pricing">
+                <div class="price"><span>₴160</span>/місяць</div>
+                <div class="old-price">₴200</div>
+            </div>
+            <button class="green-button" id="premiumPackageButton">Вибрати</button>
+            <div class="package-benefit accessible">Бізнес-сторінка</div>
+            <div class="package-benefit accessible">Статистика оголошень</div>
+            <div class="package-benefit accessible">Підняття кожного оголошення</div>
+            <div class="package-benefit">Персональний дизайн сторінки</div>
+            <div class="package-benefit">Фільтр оголошень у профілі</div>
+        </div>
+        <div class="vip-package-card">
+            <div class="package-header">
+                <div class="package-name">Мега</div>
+                <div class="package-discount">-33%</div>
+            </div>
+            <div class="package-description">Ідеально підходить для підприємств, яким потрібні персоналізовані послуги і безпека</div>
+            <div class="package-pricing">
+                <div class="price"><span>₴2600</span>/місяць</div>
+                <div class="old-price">₴3500</div>
+            </div>
+            <button class="green-button" id="megaPackageButton">Вибрати</button>
+            <div class="package-benefit accessible">Бізнес-сторінка</div>
+            <div class="package-benefit accessible">Статистика оголошень</div>
+            <div class="package-benefit accessible">Підняття кожного оголошення</div>
+            <div class="package-benefit accessible">Персональний дизайн сторінки</div>
+            <div class="package-benefit accessible">Фільтр оголошень у профілі</div>
+        </div>
+    </div>
+</div>
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/home.css"/>
+}

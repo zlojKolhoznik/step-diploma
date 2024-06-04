@@ -1,9 +1,4 @@
-﻿.main-container {
-    display: flex;
-    justify-content: center;
-}
-
-.product {
+﻿.product {
     max-width: calc(100% - 280px);
     background-color: var(--white-color);
     margin-top: -180px;
