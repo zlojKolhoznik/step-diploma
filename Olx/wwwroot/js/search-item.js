@@ -1,9 +1,5 @@
-﻿$(document).ready(function () {
-    $('.cityName').each((index, element) => {
-        const ref = $(element).data('ref');
-        getCityNameByRefIndex(ref, element);
-    });
-    $('.product-card > a').click(e => {
+﻿$(document).ready(() => {
+    $('.search-result > a').click(e => {
         if (e.target.tagName.toLowerCase() === 'button'
             || e.target.tagName.toLowerCase() === 'svg'
             || e.target.tagName.toLowerCase() === 'path') {
@@ -11,10 +7,10 @@
         }
     });
     $('.like-button').click(e => {
-        const id = $(e.target).closest('.product-card').data('id');
+        const id = $(e.target).closest('.search-result').data('id');
         $.post('/Product/ToggleFavorite', { id }, function (data) {
             console.log(data)
-            let svg = $(`.product-card[data-id="${id}"] .like-button svg`);
+            let svg = $(`.search-result[data-id="${id}"] .like-button svg`);
             console.log(svg);
             if (data.isFavorite) {
                 svg.attr('fill', '#FB6C6C');
@@ -27,7 +23,17 @@
         });
     });
     $('.shipment-button').click(e => {
-        const id = $(e.target).closest('.product-card').data('id');
+        const id = $(e.target).closest('.search-result').data('id');
+        window.location.href = `/delivery/${id}`;
+    });
+    $('.message-button').on('click', function (e) {
+        e.preventDefault();
+        const id = $(e.target).closest('.search-result').data('id');
+        window.location.href = `/Chats/Chat?id=${id}`;
+    });
+    $('.order-button').on('click', function (e) {
+        e.preventDefault();
+        const id = $(e.target).closest('.search-result').data('id');
         window.location.href = `/delivery/${id}`;
     });
 });

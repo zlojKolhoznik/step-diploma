@@ -1,11 +1,13 @@
-﻿@using Olx.Models
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Olx.Models
+@using Olx.ViewModels
 @model Olx.Models.Product
 @{
     ViewBag.Title = Model.Name;
     Layout = "_Layout";
 }
 
-<partial name="_SearchBar"/>
+<partial name="_SearchBar" model="@(new SearchViewModel())"/>
 <div class="white-panel"></div>
 <div class="main-container">
     <div class="product p-5 d-flex flex-column">

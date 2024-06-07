@@ -28,7 +28,14 @@
 <script src="~/js/header.js"></script>
 <script src="/js/product.js"></script>
 <script src="/js/product-card.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script src="/js/search-bar.js"></script>
 @await RenderSectionAsync("Scripts", required: false)
+<script>
+    @if (ViewBag.Error is not null)
+    {
+        @:toastr.error("@ViewBag.Error");
+    }
+</script>
 </body>
 </html>

@@ -1,0 +1,292 @@
+﻿@using Olx.Extensions
+@using Olx.Models
+@using Olx.ViewModels
+@model Olx.ViewModels.SearchViewModel
+
+@{
+    ViewBag.Title = $"{Model.Query ?? "Пошук"}";
+    Layout = "_Layout";
+}
+
+<partial name="_SearchBar" model="@Model"/>
+
+<div class="main-container">
+    <div class="links col-12 d-flex gap-2 flex-row-reverse align-items-center justify-content-end my-5">
+        <span>@ViewBag.Title</span>
+        <img src="~/assets/icons/arrow.svg"/>
+        <a asp-controller="Home" asp-action="Index">Головна</a>
+    </div>
+    <div class="content">
+        <div class="filters">
+            <h2 class="title">Фільтри</h2>
+            <div class="d-flex justify-content-between mb-3" style="width: 85%">
+                <h4 class="filter-name">Категорія</h4>
+                <button class="collapse-toggler" data-toggle-id="categories">
+                    <svg id="downArrow" width="10" height="7" viewBox="0 0 10 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L5 5L9 1" stroke="#353535" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="filter-group" id="categories">
+                @foreach (var category in Model.Categories)
+                {
+                    <label for="cat-@category.NormalizedName" class="radio-label">
+                        @if (Model.Category == category.NormalizedName)
+                        {
+                            <input type="radio" name="category" id="cat-@category.NormalizedName" 
+                                   value="@category.NormalizedName" checked="checked" form="searchBar"/>
+                        }
+                        else
+                        {
+                            <input type="radio" name="category" id="cat-@category.NormalizedName" 
+                                   value="@category.NormalizedName" form="searchBar"/>
+                        }
+                        <span>@category.Name</span>
+                    </label>
+                }
+            </div>
+            <div class="d-flex justify-content-between mb-3" style="width: 85%">
+                <h4 class="filter-name">Стан</h4>
+                <button class="collapse-toggler" data-toggle-id="states">
+                    <svg id="downArrow" width="10" height="7" viewBox="0 0 10 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L5 5L9 1" stroke="#353535" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="filter-group" id="states">
+                <label for="state-new">
+                    @if ((Model.ItemState is not null && Model.ItemState.Contains(ItemState.New.ToString())) 
+                         || Model.ItemState is null || Model.ItemState.Length is 2 or 3 or 0)
+                    {
+                        <input type="checkbox" name="itemState" id="state-new" value="@ItemState.New.ToString()"
+                               checked="checked" form="searchBar"/>
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="itemState" id="state-new" value="@ItemState.New.ToString()" form="searchBar"/>
+                    }
+                    <span>@ItemState.New.GetDisplayName()</span>
+                </label>
+                <label for="state-used">
+                    @if ((Model.ItemState is not null && Model.ItemState.Contains(ItemState.Used.ToString())) 
+                         || Model.ItemState is null || Model.ItemState.Length is 2 or 3 or 0)
+                    {
+                    <input type="checkbox" name="itemState" id="state-used" value="@ItemState.Used.ToString()"
+                           checked="checked" form="searchBar"/>
+                    }
+                    else
+                    {
+                    <input type="checkbox" name="itemState" id="state-used" value="@ItemState.Used.ToString()" form="searchBar"/>
+                    }
+                    <span>@ItemState.Used.GetDisplayName()</span>
+                </label>
+                <label for="state-all">
+                    @if (Model.ItemState is null || Model.ItemState.Length is 2 or 3 or 0)
+                    {
+                        <input type="checkbox" name="itemState" id="state-all" checked="checked" form="searchBar"/>
+                    }
+                    else
+                    {
+                        <input type="checkbox" name="itemState" id="state-all" form="searchBar"/>
+                    }
+                    <span>Усі</span>
+                </label>
+            </div>
+            <div class="d-flex justify-content-between mb-3" style="width: 85%">
+                <h4 class="filter-name">Ціна</h4>
+                <button class="collapse-toggler" data-toggle-id="price">
+                    <svg id="downArrow" width="10" height="7" viewBox="0 0 10 7" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M1 1L5 5L9 1" stroke="#353535" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="price-wrapper mb-5" id="price">
+                <div class="price-input-container">
+                    <div class="slider-container mb-3">
+                        <div class="price-slider"></div>
+                        <div class="range-input">
+                            <input type="range"
+                                   class="min-range"
+                                   min="0"
+                                   value="@(Model.MinPrice ?? "0")"
+                                   max="@Model.Results.Max(p => p.Price)"
+                                   step="1" form="searchBar">
+                            <input type="range"
+                                   class="max-range"
+                                   min="0"
+                                   value="@(Model.MaxPrice ?? Model.Results.Max(p => p.Price).ToString())"
+                                   max="@Model.Results.Max(p => p.Price)"
+                                   step="1" form="searchBar">
+                        </div>
+                    </div>
+                    <div class="price-input">
+                        <div class="price-field">
+                            <input type="number"
+                                   class="min-input"
+                                   min="0"
+                                   value="@(Model.MinPrice ?? "0")"
+                                   max="@Model.Results.Max(p => p.Price)"
+                                   name="minPrice" form="searchBar"/>
+                        </div>
+                        <span>&nbsp; &ndash; &nbsp;</span>
+                        <div class="price-field">
+                            <input type="number"
+                                   class="max-input"
+                                   min="0"
+                                   value="@(Model.MaxPrice ?? Model.Results.Max(p => p.Price).ToString())"
+                                   max="@Model.Results.Max(p => p.Price)"
+                                   name="maxPrice" form="searchBar"/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- TODO: Seller rating when implemented -->
+            <div class="d-flex justify-content-around align-items-center gap-2" style="width: 85%;">
+                <button id="removeFilters">Скинути всі фільтри</button>
+            </div>
+        </div>
+        <div class="results">
+            <div class="top-panel">
+                <p>Знайдено
+                    @switch (Model.Count)
+                    {
+                        case >= 0 and <= 1000:
+                            <text> @(Model.Count) оголошень</text>
+                            break;
+                        default:
+                            <text> понад 1000 оголошень</text>
+                            break;
+                    }
+                </p>
+                <select name="orderBy" class="order-by" form="searchBar">
+                    <option selected="selected" disabled="disabled">Сортувати за</option>
+                    @foreach (var val in Enum.GetValues<SortingOrder>())
+                    {
+                        <option value="@val.ToString()">@val.GetDisplayName()</option>
+                    }
+                </select>
+            </div>
+            @foreach (var product in Model.Results)
+            {
+                @await Component.InvokeAsync("SearchItem", new {product})
+            }
+        </div>
+    </div>
+</div>
+<div class="pagination">
+    <a asp-action="Search" asp-route-page="@(Model.Page - 1)"
+       asp-route-q="@Model.Query" asp-route-l="@Model.City"
+       asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice"
+       asp-route-category="@Model.Category" asp-route-itemState="@Model.ItemState"
+       asp-route-orderBy="@Model.OrderBy"
+       class="@(Model.Page == 1 ? "disabled" : "") pagination-link">&LT;</a>
+    
+
+    @if (Model.Page > 3)
+    {
+    <a asp-action="Search" asp-route-page="1"
+       asp-route-q="@Model.Query" asp-route-l="@Model.City"
+       asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice"
+       asp-route-category="@Model.Category" asp-route-itemState="@Model.ItemState"
+       asp-route-orderBy="@Model.OrderBy"
+       class="@(Model.Page == 1 ? "disabled" : "") pagination-link">...</a>
+    }
+
+    @for (var i = Math.Max(1, Model.Page - 2); i <= Math.Min(Model.TotalPages, Model.Page + 2); i++)
+    {
+        if (i == Model.Page)
+        {
+            <span class="page-number active">@i</span>
+        }
+        else
+        {
+            <a asp-action="Search" asp-route-page="@i"
+               asp-route-q="@Model.Query"  asp-route-l="@Model.City"
+               asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice"
+               asp-route-category="@Model.Category" asp-route-itemState="@Model.ItemState"
+               asp-route-orderBy="@Model.OrderBy"
+               class="pagination-link">@i</a>
+        }
+    }
+
+    @if (Model.Page < Model.TotalPages - 2)
+    {
+        <a asp-action="Search" asp-route-page="@Model.TotalPages"
+           asp-route-q="@Model.Query"  asp-route-l="@Model.City"
+           asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice"
+           asp-route-category="@Model.Category" asp-route-itemState="@Model.ItemState"
+           asp-route-orderBy="@Model.OrderBy"
+           class="@(Model.Page == Model.TotalPages ? "disabled" : "") pagination-link">...</a>
+    }
+
+    <a asp-action="Search" asp-route-page="@(Model.Page + 1)"
+       asp-route-q="@Model.Query"  asp-route-l="@Model.City"
+       asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice"
+       asp-route-category="@Model.Category" asp-route-itemState="@Model.ItemState"
+       asp-route-orderBy="@Model.OrderBy"
+       class="@(Model.Page == Model.TotalPages ? "disabled" : "") pagination-link">&GT;</a>
+    
+</div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/search.css"/>
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $(document).ready(() => {
+            $('.city').each((i, el) => {
+                const city = $(el).data('ref');
+                getCityNameByRefIndex(city, el);
+            });
+            $('.collapse-toggler').on('click', e => {
+                let button = $(e.target);
+                if (!button.is('button')) {
+                    button = button.closest('button');
+                }
+                const target = button.data('toggle-id');
+                console.log($(e.target));
+                $(`#${target}`).slideToggle();
+            });
+            $('#state-all').on('change', e => {
+                if (e.target.checked) {
+                    $('#state-new').prop('checked', true);
+                    $('#state-used').prop('checked', true);
+                } else {
+                    $('#state-new').prop('checked', false);
+                    $('#state-used').prop('checked', false);
+                }
+            });
+            $('#state-new').on('change', e => {
+                if (!e.target.checked) {
+                    $('#state-all').prop('checked', false);
+                } else if ($('#state-used').prop('checked')) {
+                    $('#state-all').prop('checked', true);
+                }
+            });
+            $('#state-used').on('change', e => {
+                if (!e.target.checked) {
+                    $('#state-all').prop('checked', false);
+                } else if ($('#state-new').prop('checked')) {
+                    $('#state-all').prop('checked', true);
+                }
+            });
+            $('.disabled').click(e => e.preventDefault());
+            $('#removeFilters').on('click', e => {
+                e.preventDefault();
+                $('input[type="radio"]').prop('checked', false);
+                $('input[type="checkbox"]').prop('checked', false);
+                $('input[name="minPrice"]').val($('.min-range').attr('min'));
+                $('input[name="maxPrice"]').val($('.max-range').attr('max'));
+                $('input.min-range').val($('.min-range').attr('min'));
+                $('input.max-range').val($('.max-range').attr('max'));
+                const slider = $('.price-slider');
+                slider.css('left', '0');
+                slider.css('right', '0');
+            });
+        });
+    </script>
+    <script src="~/js/search-item.js"></script>
+    <script src="~/js/price-slider.js"></script>
+}

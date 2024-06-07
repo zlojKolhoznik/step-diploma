@@ -1,6 +1,9 @@
-﻿<form class="search-bar" method="get" asp-action="Search" asp-controller="Home">
+﻿@model Olx.ViewModels.SearchViewModel?
+
+<form class="search-bar" id="searchBar" method="get" asp-action="Search" asp-controller="Home">
+    <input type="hidden" name="page" value="@Model?.Page">
     <div class="group">
-        <input type="text" name="q" id="q" class="search-products"/>
+        <input type="text" name="q" id="q" class="search-products" value="@Model?.Query"/>
         <div class="search-input-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22 12C22 12 19 18 12 18C5 18 2 12 2 12C2 12 5 6 12 6C19 6 22 12 22 12Z" stroke="#908C81" stroke-width="2" stroke-linecap="round"/>
@@ -10,7 +13,7 @@
         <label for="q" class="search-label"><span>ЩО</span> шукаєте?</label>
     </div>
     <div class="group">
-        <input type="text" name="l" id="l" class="search-location"/>
+        <input type="text" name="l" id="l" class="search-location" value="@Model?.City"/>
         <div class="search-input-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M12 21C12 21 18 14.7 18 9C18 5.68629 15.3137 3 12 3C8.68629 3 6 5.68629 6 9C6 14.7 12 21 12 21Z" stroke="#908C81" stroke-width="2"/>
@@ -18,8 +21,6 @@
             </svg>
         </div>
         <label for="l" class="search-label"><span>ДЕ</span> шукаєте?</label>
-        <input type="hidden" name="loc">
-        <div class="suggestions"></div>
     </div>
     <button type="submit" class="search-button">
         <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
