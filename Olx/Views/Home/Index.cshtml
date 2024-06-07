@@ -1,10 +1,12 @@
-﻿@model Olx.ViewModels.HomeViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Olx.ViewModels
+@model Olx.ViewModels.HomeViewModel
 
 @{
     ViewData["Title"] = "Головна";
 }
 
-<partial name="_SearchBar"/>
+<partial name="_SearchBar" model="@(new SearchViewModel())"/>
 
 <div class="white-panel"></div>
 <div class="main-container">
@@ -12,7 +14,7 @@
         @foreach (var category in Model.Categories)
         {
             <!-- in the future, we will change this to a search query for the category -->
-            <a asp-action="Index" class="category">
+            <a asp-action="Search" asp-route-category="@category.NormalizedName" class="category">
                 <div class="category-icon">
                     <img src="@category.IconUrl" alt="@category.Name">
                 </div>
