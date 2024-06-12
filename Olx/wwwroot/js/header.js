@@ -9,4 +9,4 @@
             $('#downArrow').css('transform', 'rotate(0deg)');
         }
     });
-});
+}); // change for merge commit, will remove later
