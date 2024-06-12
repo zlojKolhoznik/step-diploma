@@ -21,12 +21,12 @@
             <div class="method-container">
                 <div class="method-input-wrapper">
                     <input type="radio" name="paymentMethod" id="byCard" class="delivery-method"
-                           value="card" checked="checked" data-price="@Model.Product.Price">
+                           value="card" checked="checked" data-price="@(Model.Product.Price * Model.Quantity)">
                 </div>
                 <div class="d-flex justify-content-between w-100">
                     <div class="method-description">
                         <h4 class="method-title">Карткою онлайн</h4>
-                        <p class="method-price">@Model.Product.Price грн.</p>
+                        <p class="method-price">@(Model.Product.Price * Model.Quantity) грн.</p>
                     </div>
                 </div>
             </div>
@@ -35,12 +35,12 @@
             <div class="method-container">
                 <div class="method-input-wrapper">
                     <input type="radio" name="paymentMethod" id="prepayment" class="delivery-method"
-                           value="prepayment" data-price="@(Model.Product.Price * .02 + 20)">
+                           value="prepayment" data-price="@(Model.Product.Price * Model.Quantity * .02 + 20)">
                 </div>
                 <div class="d-flex justify-content-between w-100">
                     <div class="method-description">
                         <h4 class="method-title">Післяплата з передплатою</h4>
-                        <p class="method-price">@(Model.Product.Price * .02 + 20) грн.</p>
+                        <p class="method-price">@(Model.Product.Price * Model.Quantity * .02 + 20) грн.</p>
                         <p class="method-text">2% від вартості вантажу + 20 грн.</p>
                     </div>
                 </div>
@@ -50,12 +50,12 @@
             <div class="method-container">
                 <div class="method-input-wrapper">
                     <input type="radio" name="paymentMethod" id="epay" class="delivery-method"
-                           value="epay" data-price="@Model.Product.Price">
+                           value="epay" data-price="@(Model.Product.Price * Model.Quantity)">
                 </div>
                 <div class="d-flex justify-content-between w-100">
                     <div class="method-description">
                         <h4 class="method-title">Електронний гаманець</h4>
-                        <p class="method-price">@Model.Product.Price грн.</p>
+                        <p class="method-price">@(Model.Product.Price * Model.Quantity) грн.</p>
                         <div class="method-logo">
                             <img src="~/assets/icons/Apple_Pay_logo.svg" alt="Epay">
                             <img src="~/assets/icons/Google_Pay_Logo.svg" alt="Epay">
@@ -105,7 +105,7 @@
                 <img src="~/assets/icons/payment-protection.svg" alt="Payment protection" class="payment-info-image">
             </div>
         </div>
-        <input type="submit" name="submit" id="orderButton" class="order-button" value="Сплатити @Model.Product.Price грн.">
+        <input type="submit" name="submit" id="orderButton" class="order-button" value="Сплатити @(Model.Product.Price * Model.Quantity) грн.">
     </div>
     <input type="hidden" name="productId" value="@Model.Product.Id">
     <input type="hidden" asp-for="BuyerId" value="@UserManager.GetUserId(User)">

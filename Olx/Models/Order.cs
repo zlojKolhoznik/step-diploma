@@ -26,6 +26,9 @@ public class Order
     
     public DeliveryMethod DeliveryMethod { get; set; }
 
+    [Range(1, int.MaxValue)] 
+    public int Quantity { get; set; } = 1;
+
     // Delivery details
     
     public string ReceiverName { get; set; }

@@ -22,8 +22,13 @@ public class OrderController : Controller
     }
 
     [Route("/delivery/{id:int:min(1)}")]
-    public async Task<IActionResult> Delivery(int? id)
+    public async Task<IActionResult> Delivery(int? id, int? quantity)
     {
+        if (quantity is null)
+        {
+            return BadRequest();
+        }
+        
         var product = _context.Products.Include(product => product.Category)
             .ThenInclude(category => category.Parent).Include(p => p.Owner)
             .Include(p => p.Category).FirstOrDefault(p => p.Id == id);
@@ -37,7 +42,8 @@ public class OrderController : Controller
             ProductId = product.Id,
             Product = product,
             BuyerId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-            Buyer = _context.Users.Find(User.FindFirstValue(ClaimTypes.NameIdentifier))
+            Buyer = _context.Users.Find(User.FindFirstValue(ClaimTypes.NameIdentifier)),
+            Quantity = quantity.Value
         };
         
         List<Category> categoryChain = [];
@@ -109,9 +115,14 @@ public class OrderController : Controller
     [Route("/payment/{id:int:min(1)}")]
     public async Task<IActionResult> Payment(int id, string? cardNumber, string? cardExpirationDate, string? cardCvv, string? paymentMethod)
     {
-        var order = _context.Orders.Include(order => order.Product).ThenInclude(product => product.Category)
-            .ThenInclude(category => category.Parent).Include(o => o.Product).ThenInclude(product => product.Category)
+        var order = _context.Orders.Include(order => order.Product)
+            .ThenInclude(product => product.Category)
+            .ThenInclude(category => category.Parent)
+            .Include(o => o.Product)
+            .ThenInclude(product => product.Category)
             .Include(o => o.Buyer)
+            .Include(order => order.Product)
+            .ThenInclude(product => product.Owner)
             .FirstOrDefault(o => o.ProductId == id && o.BuyerId == User.FindFirstValue(ClaimTypes.NameIdentifier) && !o.IsPaymentCompleted);
         if (order is null)
         {
@@ -129,7 +140,7 @@ public class OrderController : Controller
         
         if (cardExpirationDate is not null && cardNeeded)
         {
-            if (!checkExpirationDate(cardExpirationDate))
+            if (!CheckExpirationDate(cardExpirationDate))
             {
                 ModelState.AddModelError("CardExpirationDate", "Невалідний термін дії картки");
             }
@@ -165,10 +176,22 @@ public class OrderController : Controller
         
         order.IsPaymentCompleted = true;
         order.State = OrderState.Processing;
+        order.Product.QuantityAvailable -= order.Quantity;
+        if (order.Product.QuantityAvailable <= 0)
+        {
+            order.Product.PublicationState = PublicationState.Archived;
+        }
         _context.Orders.Update(order);
+        _context.Products.Update(order.Product);
         await _context.SaveChangesAsync();
         await _emailSender.SendEmailAsync(order.ReceiverEmail, "Замовлення успішно оплачено",
             $"Ваше замовлення на {order.Product.Name} успішно оплачено. Сума: {order.Product.Price}. Очікуйте на підтвердження від продавця.");
+        if (order.Product.Owner.Email is not null)
+        {
+            await _emailSender.SendEmailAsync(order.Product.Owner.Email, "Нове замовлення",
+                $"На ваш товар {order.Product.Name} було зроблено нове замовлення. Перевірте стан замовлення в особистому кабінеті.");
+        }
+
         return RedirectToAction("Index", "Home");
     }
     
@@ -196,7 +219,7 @@ public class OrderController : Controller
         return cvv.Length is 3 or 4 && cvv.All(char.IsDigit);
     }
     
-    private bool checkExpirationDate(string expirationDate)
+    private bool CheckExpirationDate(string expirationDate)
     {
         if (expirationDate.Length != 5)
         {

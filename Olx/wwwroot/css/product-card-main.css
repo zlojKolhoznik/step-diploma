@@ -29,6 +29,15 @@
     text-decoration: none;
 }
 
+.text-input {
+    padding: 10px;
+    font-size: 1.1em;
+    background-color: var(--light-color);
+    color: var(--black-color);
+    border-radius: 6px;
+    text-align: right;
+}
+
 .links a:hover {
     color: var(--black-color);
 }

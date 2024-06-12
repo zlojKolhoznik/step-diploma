@@ -57,4 +57,9 @@ public class Product
     public List<User>? FavoredBy { get; set; }
     
     public List<Order>? Orders { get; set; }
+
+    [Range(0, int.MaxValue)]
+    public int QuantityAvailable { get; set; } = 1;
+
+    public PublicationState PublicationState { get; set; }
 }

@@ -50,96 +50,7 @@ public class ProductController : Controller
 
         return View(product);
     }
-
-    // public async Task<IActionResult> GetProductsByFilters(int? categoryId, int? pricing, int? itemState,
-    //     string? city, double? minPrice, double? maxPrice, Dictionary<string, string>? filters)
-    // {
-    //     var products = _context.Products.AsQueryable();
-    //     if (categoryId is not null)
-    //     {
-    //         products = products.Where(p => p.CategoryId == categoryId);
-    //         if (filters is not null)
-    //         {
-    //             products = await FilterProductsAsync(products, categoryId, filters);
-    //         }
-    //     }
-    //     
-    //     if (pricing is not null)
-    //     {
-    //         var priceType = (PriceType)pricing;
-    //         if (Enum.IsDefined(priceType))
-    //         {
-    //             products = products.Where(p => p.PriceType == priceType);
-    //
-    //             if (priceType == PriceType.Regular)
-    //             {
-    //                 products = products.Where(p => p.Price >= (minPrice ?? 0) && p.Price <= (maxPrice ?? double.MaxValue));
-    //             }
-    //         }
-    //         else
-    //         {
-    //             ModelState.AddModelError("pricing", "Invalid pricing type");
-    //         }
-    //     }
-    //     
-    //     if (itemState is not null)
-    //     {
-    //         if (Enum.IsDefined((ItemState)itemState))
-    //         {
-    //             products = products.Where(p => p.ItemState == (ItemState)itemState);
-    //         }
-    //         else
-    //         {
-    //             ModelState.AddModelError("itemState", "Invalid item state");
-    //         }
-    //     }
-    //     
-    //     if (city is not null)
-    //     {
-    //         products = products.Where(p => p.City == city);
-    //     }
-    //     
-    //     return View(await products.ToListAsync());
-    // }
-    //
-    // private async Task<IQueryable<Product>> FilterProductsAsync(IQueryable<Product> products, int? categoryId, Dictionary<string,string> filters)
-    // {
-    //     IEnumerable<FilterDeclaration> declarations = await GetFiltersByCategoryAsync(categoryId);
-    //     foreach (var declaration in declarations)
-    //     {
-    //         if (declaration.FilterType == FilterType.Number)
-    //         {
-    //             if (filters.TryGetValue($"max-{declaration.Name}", out var maxValue))
-    //             {
-    //                 if (double.TryParse(maxValue, out var max))
-    //                 {
-    //                     products = products.Where(p => p.Filters.Any(f =>
-    //                         f.FilterDeclarationId == declaration.Id && double.Parse(f.Value) <= max));
-    //                 }
-    //             }
-    //             
-    //             if (filters.TryGetValue($"min-{declaration.Name}", out var minValue))
-    //             {
-    //                 if (double.TryParse(minValue, out var min))
-    //                 {
-    //                     products = products.Where(p => p.Filters.Any(f =>
-    //                         f.FilterDeclarationId == declaration.Id && double.Parse(f.Value) >= min));
-    //                 }
-    //             }
-    //         }
-    //         else
-    //         {
-    //             if (filters.TryGetValue(declaration.Name, out var value))
-    //             {
-    //                 products = products.Where(p => p.Filters.Any(f =>
-    //                     f.FilterDeclarationId == declaration.Id && f.Value == value));
-    //             }
-    //         }
-    //
-    //     }
-    //     return products;
-    // }
-    //
+    
     private async Task<IEnumerable<FilterDeclaration>> GetFiltersByCategoryAsync(int? categoryId)
     {
         string url =
@@ -202,7 +113,7 @@ public class ProductController : Controller
                 ? new string(user.PhoneNumber.Where(char.IsDigit).ToArray())
                 : enteredPhone;
             _context.Users.Update(user);
-
+            product.PublicationState = PublicationState.Active;
             _context.Add(product);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
