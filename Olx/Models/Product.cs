@@ -32,6 +32,13 @@ public class Product
     public DateTime CreatedAt { get; set; }
     
     public DateTime? UpdatedAt { get; set; }
+    
+    public DateTime? RejectedAt { get; set; }
+    
+    public bool IsRejected => RejectedAt is not null && (UpdatedAt is null || RejectedAt > UpdatedAt);
+    
+    [MinLength(5), MaxLength(500)]
+    public string? RejectionReason { get; set; }
 
     public bool IsAutorenewing { get; set; }
     
