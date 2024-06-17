@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 
@@ -22,4 +23,7 @@ public class User : IdentityUser
     
     [ValidateNever]
     public List<Order>? Orders { get; set; }
+
+    [Range(0, double.MaxValue)]
+    public double Balance { get; set; } = 0;
 }
