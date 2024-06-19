@@ -256,6 +256,27 @@ public class ProductController : Controller
         return View(product);
     }
 
+    public async Task<IActionResult> SoftDelete(int? id, string? returnUrl)
+    {
+        if (id is null)
+        {
+            return NotFound();
+        }
+
+        var product = await _context.Products.FindAsync(id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+
+        product.PublicationState = product.PublicationState == PublicationState.Archived
+            ? PublicationState.Active
+            : PublicationState.Archived;
+        _context.Update(product);
+        await _context.SaveChangesAsync();
+        return returnUrl is null ? Ok() : Redirect(returnUrl);
+    }
+
     // GET: Product/Delete/5
     public async Task<IActionResult> Delete(int? id)
     {
@@ -279,7 +300,7 @@ public class ProductController : Controller
     // POST: Product/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> DeleteConfirmed(int id)
+    public async Task<IActionResult> DeleteConfirmed(int id, string? returnUrl)
     {
         var product = await _context.Products.FindAsync(id);
         if (product is not null)
@@ -293,7 +314,7 @@ public class ProductController : Controller
         }
 
         await _context.SaveChangesAsync();
-        return RedirectToAction(nameof(Index));
+        return returnUrl is null ? RedirectToAction(nameof(Index)) : Redirect(returnUrl);
     }
 
     // GET: Product/5
@@ -411,5 +432,73 @@ public class ProductController : Controller
         user.Favorites!.Clear();
         await _context.SaveChangesAsync();
         return RedirectToAction("FavoriteProducts", "User");
+    }
+
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> ToggleAutorenewing(int? id, string? returnUrl = null)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (product.OwnerId != userId)
+        {
+            return Forbid();
+        }
+        
+        product.IsAutorenewing = !product.IsAutorenewing;
+        _context.Update(product);
+        await _context.SaveChangesAsync();
+        return returnUrl is null ? Ok() : Redirect(returnUrl);
+    }
+    
+    [Authorize]
+    public async Task<IActionResult> ToggleVisibility(int? id, string? returnUrl = null)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (product.OwnerId != userId)
+        {
+            return Forbid();
+        }
+        
+        product.PublicationState = product.PublicationState == PublicationState.Active
+            ? PublicationState.Hidden
+            : PublicationState.Active;
+        _context.Update(product);
+        await _context.SaveChangesAsync();
+        return returnUrl is null ? Ok() : Redirect(returnUrl);
+    }
+    
+    [Authorize]
+    public async Task<IActionResult> ToggleArchivation(int? id, string? returnUrl = null)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product is null)
+        {
+            return NotFound();
+        }
+        
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (product.OwnerId != userId)
+        {
+            return Forbid();
+        }
+        
+        product.PublicationState = product.PublicationState == PublicationState.Archived
+            ? PublicationState.Active
+            : PublicationState.Archived;
+        _context.Update(product);
+        await _context.SaveChangesAsync();
+        return returnUrl is null ? Ok() : Redirect(returnUrl);
     }
 }

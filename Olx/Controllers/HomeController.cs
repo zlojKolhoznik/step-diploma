@@ -102,7 +102,8 @@ public class HomeController : Controller
             Categories = _context.Categories.ToList(),
             Page = page,
             TotalPages = (int)Math.Ceiling(results.Count / (double)PageSize),
-            Count = results.Count
+            Count = results.Count,
+            OrderBy = orderBy
         });
     }
 

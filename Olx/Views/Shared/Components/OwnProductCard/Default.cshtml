@@ -1,0 +1,84 @@
+﻿@using Olx.Models
+@model Olx.ViewModels.OwnProductCardViewModel
+
+<div class="own-product">
+    <div class="image-container">
+        <img src="@Model.Product.PhotoUrls[0]" alt="@Model.Product.Name">
+    </div>
+    <div class="own-product__info">
+        <div class="own-product__info__top">
+            <div class="own-product__info__top__content">
+                <a asp-action="Card" asp-controller="Product" asp-route-id="@Model.Product.Id" class="title">@Model.Product.Name</a>
+                <div class="d-flex gap-1">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.50098 9.00049C5.50098 6.86103 6.23852 5.24903 7.39275 4.16961C8.5523 3.08522 10.1733 2.50049 12.001 2.50049C13.8274 2.50049 15.4486 3.09021 16.6088 4.17777C17.7638 5.26054 18.501 6.87303 18.501 9.00049C18.501 12.1006 16.8283 15.2433 15.095 17.6547C14.2348 18.8514 13.3738 19.8488 12.7277 20.5469C12.4334 20.8649 12.1843 21.1203 12.001 21.3034C11.8176 21.1203 11.5685 20.8649 11.2742 20.5469C10.6282 19.8488 9.76711 18.8514 8.90698 17.6547C7.17366 15.2433 5.50098 12.1006 5.50098 9.00049ZM11.6611 22.3672C11.6613 22.3674 11.6614 22.3675 12.001 22.0005L11.6614 22.3675C11.8531 22.5448 12.1489 22.5448 12.3406 22.3675L12.001 22.0005C12.3406 22.3675 12.3407 22.3674 12.3408 22.3672L12.3412 22.3669L12.3426 22.3656L12.3471 22.3614L12.3636 22.346C12.3778 22.3326 12.3985 22.313 12.4252 22.2875C12.4785 22.2365 12.5559 22.1616 12.6539 22.0644C12.8498 21.8701 13.1282 21.5865 13.4617 21.2261C14.1282 20.5059 15.0171 19.4764 15.907 18.2384C17.6737 15.7805 19.501 12.4232 19.501 9.00049C19.501 6.62795 18.6712 4.74044 17.2927 3.44821C15.9193 2.16076 14.0405 1.50049 12.001 1.50049C9.96264 1.50049 8.08366 2.15433 6.70971 3.43923C5.33044 4.7291 4.50098 6.6171 4.50098 9.00049C4.50098 12.4232 6.32829 15.7805 8.09498 18.2384C8.98484 19.4764 9.87378 20.5059 10.5403 21.2261C10.8737 21.5865 11.1522 21.8701 11.3481 22.0644C11.4461 22.1616 11.5234 22.2365 11.5768 22.2875C11.6035 22.313 11.6241 22.3326 11.6384 22.346L11.6549 22.3614L11.6594 22.3656L11.6607 22.3669L11.6611 22.3672ZM9.5 9.00043C9.5 7.61971 10.6193 6.50043 12 6.50043C13.3807 6.50043 14.5 7.61971 14.5 9.00043C14.5 10.3811 13.3807 11.5004 12 11.5004C10.6193 11.5004 9.5 10.3811 9.5 9.00043ZM12 5.50043C10.067 5.50043 8.5 7.06743 8.5 9.00043C8.5 10.9334 10.067 12.5004 12 12.5004C13.933 12.5004 15.5 10.9334 15.5 9.00043C15.5 7.06743 13.933 5.50043 12 5.50043Z" fill="#353535"/>
+                    </svg>
+                    <span class="location">@Model.City.Name, @Model.Region.Name</span>
+                </div>
+                <div class="date">
+                    <p>@((Model.Product.UpdatedAt ?? Model.Product.CreatedAt).ToShortDateString())</p>
+                    <p>@((Model.Product.UpdatedAt ?? Model.Product.CreatedAt).AddMonths(1).ToShortDateString())</p>
+                </div>
+                <div class="checkbox-group switch">
+                    @if (Model.Product.IsAutorenewing)
+                    {
+                        <input data-id="@Model.Product.Id" type="checkbox" id="toggleAutorenewing-@Model.Product.Id" class="checkbox-group__input" checked="checked">
+                    }
+                    else
+                    {
+                        <input data-id="@Model.Product.Id" type="checkbox" id="toggleAutorenewing-@Model.Product.Id" class="checkbox-group__input">
+                    }
+                    <span class="slider round"></span>
+                    <label for="toggleAutorenewing-@Model.Product.Id" class="checkbox-group__label">Автопродовження</label>
+                </div>
+                <h3 class="price">@Model.Product.Price грн</h3>
+                <div class="action-buttons">
+                    <a asp-action="Edit" asp-controller="Product" asp-route-id="@Model.Product.Id" class="action-button">Редагувати</a>
+                    @if (Model.Product.PublicationState == PublicationState.Archived)
+                    {
+                        <form method="post" asp-controller="Product" asp-action="Delete">
+                            <input type="hidden" name="id" value="@Model.Product.Id" />
+                            <input type="hidden" name="returnUrl" value="@Context.Request.Path.Value" />
+                            <button type="submit" class="action-button">Остаточно видалити</button>
+                        </form>
+                    }
+                    else
+                    {
+                        <a asp-action="ToggleVisibility" asp-controller="Product" asp-route-id="@Model.Product.Id" asp-route-returnUrl="@Context.Request.Path.Value" class="action-button">
+                            @(Model.Product.PublicationState == PublicationState.Active ? "Приховати" : "Опублікувати")
+                        </a>
+                    }
+                    <a asp-action="SoftDelete" asp-controller="Product" asp-route-id="@Model.Product.Id" asp-route-returnUrl="@Context.Request.Path.Value" class="action-button">
+                        @(Model.Product.PublicationState == PublicationState.Archived ? "Відновити" : "Видалити")
+                    </a>
+                </div>
+            </div>
+            <div class="own-product__info__top__content">
+                <div class="state">@Html.DisplayFor(m => m.Product.ItemState)</div>
+                <div class="info__container">
+                    <svg width="33" height="32" viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M16.5 24L15.34 22.9929C11.22 19.43 8.5 17.0801 8.5 14.1962C8.5 11.8463 10.436 10 12.9 10C14.292 10 15.628 10.618 16.5 11.5946C17.372 10.618 18.708 10 20.1 10C22.564 10 24.5 11.8463 24.5 14.1962C24.5 17.0801 21.78 19.43 17.66 23.0005L16.5 24Z" stroke="#353535" stroke-width="2"/>
+                    </svg>
+                    <span>@Model.Likes</span>
+                </div>
+                <div class="info__container">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M24 15.19C24 18.7688 20.4183 21.67 16 21.67C15.1118 21.67 14.2574 21.5527 13.4591 21.3363L9.6 23.29L10.1226 19.5862C8.80503 18.431 8 16.8866 8 15.19C8 11.6112 11.5817 8.70996 16 8.70996C20.4183 8.70996 24 11.6112 24 15.19Z" stroke="#353535" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    <span>@Model.Chats</span>
+                </div>
+            </div>
+        </div>
+        <div class="own-product__info__bottom">
+            @if (Model.Product.IsRejected)
+            {
+                <span class="warning">ПОМИЛКА: </span>
+                <span class="rejection-reason">@Model.Product.RejectionReason</span>
+            }
+            else
+            {
+                <span class="muted">ID: @Model.Product.Id</span>
+            }
+        </div>
+    </div>
+</div>

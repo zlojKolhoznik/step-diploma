@@ -1,15 +1,15 @@
-﻿using System.Text.Json.Serialization;
+﻿using Newtonsoft.Json;
 
 namespace Olx.Models;
 
 public class Region
 {
-    [JsonPropertyName("Ref")]
+    [JsonProperty("Ref")]
     public string Id { get; set; }
     
-    [JsonPropertyName("AreasCenter")]
+    [JsonProperty("AreasCenter")]
     public string CenterId { get; set; }
     
-    [JsonPropertyName("Description")]
+    [JsonProperty("Description")]
     public string Name { get; set; }
 }

@@ -1,0 +1,100 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Olx.Extensions
+@using Olx.Models
+@using Olx.ViewModels
+@model Olx.ViewModels.PublicationsViewModel
+
+@{
+    ViewBag.Title = Model.State switch
+    {
+        PublicationState.Active => "Активні оголошення",
+        PublicationState.Archived => "Видалені оголошення",
+        PublicationState.Hidden => "Приховані оголошення",
+        _ => "Оголошення"
+    };
+    Layout = "_Layout";
+}
+
+<partial name="_SearchBar" model="@null"/>
+<div class="links col-12 d-flex gap-2 flex-row-reverse align-items-center justify-content-end">
+    @switch(Model.State)
+    {
+        case PublicationState.Active:
+            <span>Активні оголошення</span>
+            break;
+        case PublicationState.Archived:
+            <span>Видалені оголошення</span>
+            break;
+        case PublicationState.Hidden:
+            <span>Приховані оголошення</span>
+            break;
+        default:
+            <span>Оголошення</span>
+            break;
+    }
+    <img src="~/assets/icons/arrow.svg"/>
+    <a asp-area="Identity" asp-page="/Account/Manage/Index">Профіль</a>
+    <img src="~/assets/icons/arrow.svg"/>
+    <a asp-controller="Home" asp-action="Index">Головна</a>
+</div>
+<div class="d-flex justify-content-between py-5" style="padding-left: 140px; padding-right: 140px; background-color: var(--white-color)">
+    <div class="balance-info">
+        Мій баланс: <span>@Model.Balance грн</span>
+    </div>
+    <a href="/" class="action-button">Поповнити гаманець</a>
+</div>
+<div class="main-container">
+    <div class="header">
+        @switch (Model.State)
+        {
+            case PublicationState.Active:
+                <span class="state-name">Активні (@Model.ActiveCount)</span>
+                <a asp-action="Index" asp-route-state="@PublicationState.Hidden.ToString()" class="state-name">Приховані (@Model.HiddenCount)</a>
+                <a asp-action="Index" asp-route-state="@PublicationState.Archived.ToString()" class="state-name">У кошику (@Model.ArchivedCount)</a>
+                break;
+            case PublicationState.Hidden:
+                <a asp-action="Index" asp-route-state="@PublicationState.Active.ToString()" class="state-name">Активні (@Model.ActiveCount)</a>
+                <span class="state-name">Приховані (@Model.HiddenCount)</span>
+                <a asp-action="Index" asp-route-state="@PublicationState.Archived.ToString()" class="state-name">У кошику (@Model.ArchivedCount)</a>
+                break;
+            case PublicationState.Archived:
+                <a asp-action="Index" asp-route-state="@PublicationState.Active.ToString()" class="state-name">Активні (@Model.ActiveCount)</a>
+                <a asp-action="Index" asp-route-state="@PublicationState.Hidden.ToString()" class="state-name">У Приховані (@Model.HiddenCount)</a>
+                <span class="state-name">У кошику (@Model.ArchivedCount)</span>
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        <select name="orderBy" class="order-by">
+            <option selected="selected" disabled="disabled">Сортувати за</option>
+            @foreach (var val in Enum.GetValues<SortingOrder>())
+            {
+                <option value="@val.ToString()">@val.GetDisplayName()</option>
+            }
+        </select>
+    </div>
+    <div class="results">
+        @foreach (var product in Model.Products)
+        {
+            @await Component.InvokeAsync("OwnProductCard", new { product })
+        }
+    </div>
+</div>
+
+<div class="d-flex justify-content-between py-5" style="padding-left: 140px; padding-right: 140px; background-color: var(--white-color)">
+    <div class="publications-count">
+        Всього: <span>@Model.Products.Count() оголошень</span>
+    </div>
+</div>
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/publications.css"/>
+    <link rel="stylesheet" href="~/css/search-bar.css"/>
+    <link rel="stylesheet" href="~/css/own-product.css"/>
+}
+
+@section Scripts
+{
+    <script src="~/js/publications.js"></script>
+}

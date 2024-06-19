@@ -16,7 +16,7 @@
             <img src="~/assets/icons/arrow.svg"/>
             @foreach (var category in ViewBag.CategoryChain)
             {
-                <a href="/">@category.Name</a>
+                <a asp-controller="Home" asp-action="Search" asp-route-category="@category.NormalizedName">@category.Name</a>
                 <img src="~/assets/icons/arrow.svg"/>
             }
             <a asp-controller="Home" asp-action="Index">Головна</a>

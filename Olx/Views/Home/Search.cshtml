@@ -222,7 +222,7 @@
     <a asp-action="Search" asp-route-page="@(Model.Page + 1)"
        asp-route-q="@Model.Query"  asp-route-l="@Model.City"
        asp-route-minPrice="@Model.MinPrice" asp-route-maxPrice="@Model.MaxPrice"
-       asp-route-category="@Model.Category" asp-route-itemState="@Model.ItemState"
+       asp-route-category="@Model.Category" asp-route-itemState="@Model.ItemState?.ToString()"
        asp-route-orderBy="@Model.OrderBy"
        class="@(Model.Page == Model.TotalPages ? "disabled" : "") pagination-link">&GT;</a>
     
@@ -239,6 +239,20 @@
             $('.city').each((i, el) => {
                 const city = $(el).data('ref');
                 getCityNameByRefIndex(city, el);
+            });
+            $('.order-by').on('change', e => {
+                let orderBy = $(e.target).val();
+                let url = window.location.href;
+                if (url.endsWith('publications')) {
+                    url += '?orderBy=' + orderBy;
+                } else if (url.includes('orderBy')) {
+                    url = url.replace(/orderBy=[^&]+/, 'orderBy=' + orderBy);
+                } else if (url.includes('?')) {
+                    url += '&orderBy=' + orderBy;
+                } else {
+                    url += '?orderBy=' + orderBy;
+                }
+                window.location.href = url;
             });
             $('.collapse-toggler').on('click', e => {
                 let button = $(e.target);

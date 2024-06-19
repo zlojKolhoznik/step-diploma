@@ -1,0 +1,86 @@
+﻿.links {
+    background-color: var(--light-color);
+    padding: 2em 140px;
+}
+
+.links a {
+    color: var(--muted-color);
+    text-decoration: none;
+}
+
+.links a:hover {
+    color: var(--black-color);
+}
+
+.links span {
+    color: var(--black-color);
+}
+
+.order-by {
+    border-radius: 6px;
+    background-color: var(--green-color);
+    color: var(--white-color);
+    border: none;
+    outline: none;
+    padding: .5em 1.2em;
+    font-size: 1.2em;
+}
+
+.order-by option {
+    font-size: 1.1em;
+    line-height: 1.3em;
+}
+
+.order-by option:disabled {
+    color: var(--light-color);
+}
+
+.order-by option:hover {
+    background-color: var(--green-accent-color);
+}
+
+.balance-info {
+    color: var(--black-color);
+    font-size: 2em;
+}
+
+.balance-info span {
+    color: var(--red-color);
+    font-weight: bold;
+}
+
+.main-container {
+    background-color: var(--light-color);
+    padding: 1em 140px;
+}
+
+.main-container .header {
+    background-color: var(--light-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.state-name {
+    font-size: 1.5em;
+}
+
+a.state-name {
+    color: var(--muted-color);
+    text-decoration: none;
+}
+
+a.state-name:hover {
+    color: var(--black-color);
+}
+
+span.state-name {
+    color: var(--black-color);
+    font-weight: 600;
+}
+
+.results {
+    display: flex;
+    flex-direction: column;
+    gap: 3em;
+}
