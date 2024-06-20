@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Olx.Data;
 using Olx.Models;
@@ -7,32 +8,28 @@ using Olx.ViewModels;
 
 namespace Olx.ViewComponents;
 
-public class OwnProductCard : ViewComponent
+public class PurchaseCard : ViewComponent
 {
     private readonly IDeliveryProvider _deliveryProvider;
     private readonly ShopDbContext _context;
 
-    public OwnProductCard(IDeliveryProvider deliveryProvider, ShopDbContext context)
+    public PurchaseCard(IDeliveryProvider deliveryProvider, ShopDbContext context)
     {
         _deliveryProvider = deliveryProvider;
         _context = context;
     }
-    
+
     public async Task<IViewComponentResult> InvokeAsync(Product product)
     {
         var city = await _deliveryProvider.GetCityByIdAsync(product.City);
         var region = await _deliveryProvider.GetRegionByIdAsync(city.RegionId);
-        var likes = _context.Users.Include(u => u.Favorites)
-            .Count(u => u.Favorites.Any(f => f.Id == product.Id));
-        var chats = _context.Users.Include(u => u.Messages)
-            .Count(u => u.Messages.Any(m => m.ProductId == product.Id));
         var vm = new PublicationCardViewModel
         {
             Product = product,
             City = city,
             Region = region,
-            Likes = likes,
-            Chats = chats
+            IsOwner = product.OwnerId == UserClaimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier),
+            Order = _context.Orders.FirstOrDefault(o => o.ProductId == product.Id && o.BuyerId == UserClaimsPrincipal.FindFirstValue(ClaimTypes.NameIdentifier))
         };
         return View(vm);
     }

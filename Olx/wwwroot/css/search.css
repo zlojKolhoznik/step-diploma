@@ -328,6 +328,8 @@ input[type="range"]::-webkit-slider-thumb {
 .order-by option {
     font-size: 1.1em;
     line-height: 1.3em;
+    color: var(--black-color);
+    background-color: var(--white-color);
 }
 
 .order-by option:disabled {
@@ -335,7 +337,7 @@ input[type="range"]::-webkit-slider-thumb {
 }
 
 .order-by option:hover {
-    background-color: var(--green-accent-color);
+    background-color: var(--muted-color);
 }
 
 .pagination {

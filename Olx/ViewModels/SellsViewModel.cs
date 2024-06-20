@@ -2,7 +2,7 @@
 
 namespace Olx.ViewModels;
 
-public class PublicationsViewModel
+public class SellsViewModel
 {
     public IEnumerable<Product> Products { get; set; }
     
@@ -12,4 +12,5 @@ public class PublicationsViewModel
     public int ActiveCount { get; set; }
     public int ArchivedCount { get; set; }
     public int HiddenCount { get; set; }
+    public int OrdersCount { get; set; }
 }

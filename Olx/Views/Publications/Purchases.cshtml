@@ -1,0 +1,138 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using Olx.Extensions
+@using Olx.Models
+@using Olx.ViewModels
+@model Olx.ViewModels.PurchasesViewModel
+
+@{
+    ViewBag.Title = Model.State switch
+    {
+        OrderState.Pending => "Непідтверджені покупки",
+        OrderState.Processing => "Покупки в обробці",
+        OrderState.InDelivery => "Покупки в дорозі",
+        OrderState.InWarehouse => "Покупки у відділенні",
+        OrderState.Completed => "Виконані замовлення",
+        OrderState.Canceled => "Відмінені замовлення",
+        _ => "Мої замовлення"
+    };
+    Layout = "_Layout";
+}
+
+<partial name="_SearchBar" model="@null"/>
+<div class="links col-12 d-flex gap-2 flex-row-reverse align-items-center justify-content-end">
+    @switch(Model.State)
+    {
+        case OrderState.Pending:
+            <span>Непідтверджені покупки</span>
+            break;
+        case OrderState.Processing:
+            <span>Покупки в обробці</span>
+            break;
+        case OrderState.InDelivery:
+            <span>Покупки в дорозі</span>
+            break;
+        case OrderState.InWarehouse:
+            <span>Покупки у відділенні</span>
+            break;
+        case OrderState.Completed:
+            <span>Виконані замовлення</span>
+            break;
+        case OrderState.Canceled:
+            <span>Відмінені замовлення</span>
+            break;
+        default:
+            <span>Мої замовлення</span>
+            break;
+    }
+    <img src="~/assets/icons/arrow.svg"/>
+    <a asp-area="Identity" asp-page="/Account/Manage/Index">Профіль</a>
+    <img src="~/assets/icons/arrow.svg"/>
+    <a asp-controller="Home" asp-action="Index">Головна</a>
+</div>
+<div class="d-flex justify-content-between py-5" style="padding-left: 140px; padding-right: 140px; background-color: var(--white-color)">
+    <div class="balance-info">
+        Мій баланс: <span>@Model.Balance грн</span>
+    </div>
+    <a href="/" class="action-button">Поповнити гаманець</a>
+</div>
+<div class="main-container">
+    <div class="header">
+        @switch (Model.State)
+        {
+            case OrderState.Pending:
+                <span class="state-name">Непідтверджені (@Model.PendingCount)</span>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Processing.ToString()" class="state-name">Обробляються (@Model.ProcessingCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InDelivery.ToString()" class="state-name">В дорозі (@Model.InDeliveryCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InWarehouse.ToString()" class="state-name">У відділенні (@Model.InWarehouseCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Completed.ToString()" class="state-name">Виконані (@Model.CompletedCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Canceled.ToString()" class="state-name">Відмінені (@Model.CanceledCount)</a>
+                break;
+            case OrderState.Processing:
+                <a asp-action="Purchases" asp-route-state="@OrderState.Pending.ToString()" class="state-name">Непідтверджені (@Model.PendingCount)</a>
+                <span class="state-name">Обробляються (@Model.ProcessingCount)</span>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InDelivery.ToString()" class="state-name">В дорозі (@Model.InDeliveryCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InWarehouse.ToString()" class="state-name">У відділенні (@Model.InWarehouseCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Completed.ToString()" class="state-name">Виконані (@Model.CompletedCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Canceled.ToString()" class="state-name">Відмінені (@Model.CanceledCount)</a>
+                break;
+            case OrderState.InDelivery:
+                <a asp-action="Purchases" asp-route-state="@OrderState.Pending.ToString()" class="state-name">Непідтверджені (@Model.PendingCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Processing.ToString()" class="state-name">Обробляються (@Model.ProcessingCount)</a>
+                <span class="state-name">В дорозі (@Model.InDeliveryCount)</span>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InWarehouse.ToString()" class="state-name">У відділенні (@Model.InWarehouseCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Completed.ToString()" class="state-name">Виконані (@Model.CompletedCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Canceled.ToString()" class="state-name">Відмінені (@Model.CanceledCount)</a>
+                break;
+            case OrderState.InWarehouse:
+                <a asp-action="Purchases" asp-route-state="@OrderState.Pending.ToString()" class="state-name">Непідтверджені (@Model.PendingCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Processing.ToString()" class="state-name">Обробляються (@Model.ProcessingCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InDelivery.ToString()" class="state-name">В дорозі (@Model.InDeliveryCount)</a>
+                <span class="state-name">У відділенні (@Model.InWarehouseCount)</span>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Completed.ToString()" class="state-name">Виконані (@Model.CompletedCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Canceled.ToString()" class="state-name">Відмінені (@Model.CanceledCount)</a>
+                break;
+            case OrderState.Completed:
+                <a asp-action="Purchases" asp-route-state="@OrderState.Pending.ToString()" class="state-name">Непідтверджені (@Model.PendingCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Processing.ToString()" class="state-name">Обробляються (@Model.ProcessingCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InDelivery.ToString()" class="state-name">В дорозі (@Model.InDeliveryCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InWarehouse.ToString()" class="state-name">У відділенні (@Model.InWarehouseCount)</a>
+                <span class="state-name">Виконані (@Model.CompletedCount)</span>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Canceled.ToString()" class="state-name">Відмінені (@Model.CanceledCount)</a>
+                break;
+            case OrderState.Canceled:
+                <a asp-action="Purchases" asp-route-state="@OrderState.Pending.ToString()" class="state-name">Непідтверджені (@Model.PendingCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Processing.ToString()" class="state-name">Обробляються (@Model.ProcessingCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InDelivery.ToString()" class="state-name">В дорозі (@Model.InDeliveryCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.InWarehouse.ToString()" class="state-name">У відділенні (@Model.InWarehouseCount)</a>
+                <a asp-action="Purchases" asp-route-state="@OrderState.Completed.ToString()" class="state-name">Виконані (@Model.CompletedCount)</a>
+                <span class="state-name">Відмінені (@Model.CanceledCount)</span>
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    </div>
+    <div class="results">
+        @foreach (var product in Model.Products)
+        {
+            @await Component.InvokeAsync("PurchaseCard", new { product })
+        }
+    </div>
+</div>
+
+<div class="d-flex justify-content-between py-5" style="padding-left: 140px; padding-right: 140px; background-color: var(--white-color)">
+    <div class="publications-count">
+        Всього: <span>@Model.Products.Count() оголошень</span>
+    </div>
+</div>
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/publications.css"/>
+    <link rel="stylesheet" href="~/css/search-bar.css"/>
+    <link rel="stylesheet" href="~/css/own-product.css"/>
+}
+
+@section Scripts
+{
+    <script src="~/js/publications.js"></script>
+}

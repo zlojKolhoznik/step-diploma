@@ -29,14 +29,16 @@
 .order-by option {
     font-size: 1.1em;
     line-height: 1.3em;
+    color: var(--black-color);
+    background-color: var(--white-color);
 }
 
 .order-by option:disabled {
-    color: var(--light-color);
+    color: var(--muted-color);
 }
 
 .order-by option:hover {
-    background-color: var(--green-accent-color);
+    background-color: var(--muted-color);
 }
 
 .balance-info {

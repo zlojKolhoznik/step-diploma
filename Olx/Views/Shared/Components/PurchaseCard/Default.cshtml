@@ -1,0 +1,59 @@
+﻿@using Olx.Models
+@model Olx.ViewModels.PublicationCardViewModel
+
+<div class="own-product">
+    <div class="image-container">
+        <img src="@Model.Product.PhotoUrls[0]" alt="@Model.Product.Name">
+    </div>
+    <div class="own-product__info">
+        <div class="own-product__info__top">
+            <div class="own-product__info__top__content">
+                <a asp-action="Card" asp-controller="Product" asp-route-id="@Model.Product.Id" class="title">@Model.Product.Name</a>
+                <div class="d-flex gap-1">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M5.50098 9.00049C5.50098 6.86103 6.23852 5.24903 7.39275 4.16961C8.5523 3.08522 10.1733 2.50049 12.001 2.50049C13.8274 2.50049 15.4486 3.09021 16.6088 4.17777C17.7638 5.26054 18.501 6.87303 18.501 9.00049C18.501 12.1006 16.8283 15.2433 15.095 17.6547C14.2348 18.8514 13.3738 19.8488 12.7277 20.5469C12.4334 20.8649 12.1843 21.1203 12.001 21.3034C11.8176 21.1203 11.5685 20.8649 11.2742 20.5469C10.6282 19.8488 9.76711 18.8514 8.90698 17.6547C7.17366 15.2433 5.50098 12.1006 5.50098 9.00049ZM11.6611 22.3672C11.6613 22.3674 11.6614 22.3675 12.001 22.0005L11.6614 22.3675C11.8531 22.5448 12.1489 22.5448 12.3406 22.3675L12.001 22.0005C12.3406 22.3675 12.3407 22.3674 12.3408 22.3672L12.3412 22.3669L12.3426 22.3656L12.3471 22.3614L12.3636 22.346C12.3778 22.3326 12.3985 22.313 12.4252 22.2875C12.4785 22.2365 12.5559 22.1616 12.6539 22.0644C12.8498 21.8701 13.1282 21.5865 13.4617 21.2261C14.1282 20.5059 15.0171 19.4764 15.907 18.2384C17.6737 15.7805 19.501 12.4232 19.501 9.00049C19.501 6.62795 18.6712 4.74044 17.2927 3.44821C15.9193 2.16076 14.0405 1.50049 12.001 1.50049C9.96264 1.50049 8.08366 2.15433 6.70971 3.43923C5.33044 4.7291 4.50098 6.6171 4.50098 9.00049C4.50098 12.4232 6.32829 15.7805 8.09498 18.2384C8.98484 19.4764 9.87378 20.5059 10.5403 21.2261C10.8737 21.5865 11.1522 21.8701 11.3481 22.0644C11.4461 22.1616 11.5234 22.2365 11.5768 22.2875C11.6035 22.313 11.6241 22.3326 11.6384 22.346L11.6549 22.3614L11.6594 22.3656L11.6607 22.3669L11.6611 22.3672ZM9.5 9.00043C9.5 7.61971 10.6193 6.50043 12 6.50043C13.3807 6.50043 14.5 7.61971 14.5 9.00043C14.5 10.3811 13.3807 11.5004 12 11.5004C10.6193 11.5004 9.5 10.3811 9.5 9.00043ZM12 5.50043C10.067 5.50043 8.5 7.06743 8.5 9.00043C8.5 10.9334 10.067 12.5004 12 12.5004C13.933 12.5004 15.5 10.9334 15.5 9.00043C15.5 7.06743 13.933 5.50043 12 5.50043Z" fill="#353535"/>
+                    </svg>
+                    <span class="location">@Model.City.Name, @Model.Region.Name</span>
+                </div>
+                <div class="date">
+                    <p>@Model.Order!.CreatedAt.ToShortDateString()</p>
+                </div>
+                <h3 class="price">@Model.Product.Price грн</h3>
+                <div class="action-buttons">
+                    @if (Model.Order.State == OrderState.Pending && Model.IsOwner)
+                    {
+                        <a asp-action="Confirm" asp-controller="Order" asp-route-id="@Model.Order.Id" class="action-button">Підтвердити</a>
+                    }
+                    else if (Model.Order.State == OrderState.Processing && Model.IsOwner)
+                    {
+                        <a asp-controller="SubmitShipping" asp-action="Index" asp-route-id="@Model.Order.Id" class="action-button">Відправлено</a>
+                    }
+                    else if (Model.Order.State == OrderState.InDelivery && Model.IsOwner)
+                    {
+                        <a asp-controller="SubmitDelivery" asp-action="Index" asp-route-id="@Model.Order.Id" class="action-button">Доставлено</a>
+                    }
+                    else if (Model.Order.State == OrderState.InWarehouse && !Model.IsOwner)
+                    {
+                        <a asp-controller="SubmitWarehouse" asp-action="Index" asp-route-id="@Model.Order.Id" class="action-button">Отримано</a>
+                    }
+                    else if (Model.Order.State == OrderState.Completed)
+                    {
+                        <a asp-action="Rate" asp-controller="Order" asp-route-id="@Model.Order.Id" class="action-button">Оцінити</a>
+                    }
+                    else if (Model.Order.State == OrderState.Canceled && Model.IsOwner)
+                    {
+                        <a asp-action="Delete" asp-controller="Order" asp-route-id="@Model.Order.Id" class="action-button">Видалити</a>
+                    }
+                    
+                    @if (Model.Order.State != OrderState.Canceled)
+                    {
+                        <a asp-action="Cancel" asp-controller="Order" asp-route-id="@Model.Order.Id" class="action-button">Відмінити</a>
+                    }
+                </div>
+            </div>
+            <div class="own-product__info__top__content">
+                <div class="state">@Html.DisplayFor(m => m.Product.ItemState)</div>
+            </div>
+        </div>
+    </div>
+</div>
