@@ -50,7 +50,7 @@ public class ShopDbContext : IdentityDbContext<User>
             .UsingEntity<Dictionary<string, object>>(
                 "Favorites",
                 j => j.HasOne<Product>().WithMany().OnDelete(DeleteBehavior.NoAction),
-                j => j.HasOne<User>().WithMany().OnDelete(DeleteBehavior.NoAction));
+                j => j.HasOne<User>().WithMany().OnDelete(DeleteBehavior.Cascade));
 
         modelBuilder.Entity<Product>().HasOne<User>(p => p.Owner)
             .WithMany(u => u.Products);

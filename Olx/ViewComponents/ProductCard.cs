@@ -25,8 +25,8 @@ public class ProductCard : ViewComponent
         {
             isFavorite = _userManager.Users
                 .Include(u => u.Favorites)
-                .Single(u => u.Id == userId)
-                .Favorites!.Any(p => p.Id == product.Id);
+                .SingleOrDefault(u => u.Id == userId)
+                ?.Favorites?.Any(p => p.Id == product.Id) ?? false;
         }
         ViewData["IsFavorite"] = isFavorite;
         return View(product);

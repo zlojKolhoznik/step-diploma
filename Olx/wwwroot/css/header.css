@@ -123,6 +123,7 @@
 .drop-header a {
     color: var(--green-color);
     text-decoration: none;
+    display: flex;
 }
 
 .drop-item {
@@ -146,4 +147,11 @@
 
 .new-post-container:hover {
     background-color: var(--red-accent-color);
+}
+
+.profile-picture-header {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
 }

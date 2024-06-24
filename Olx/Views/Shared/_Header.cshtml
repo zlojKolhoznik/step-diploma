@@ -39,7 +39,10 @@
                 <div class="drop-header">
                     @if (SignInManager.IsSignedIn(User) && user is not null)
                     {
-                        <a asp-area="Identity" asp-page="/Account/Manage/Index">@(user.Name ?? user.Email)</a>
+                        <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                            <img src="/@(user.ProfilePictureUrl ?? "assets/icons/person.svg")" alt="profile-picture" class="profile-picture-header"/>
+                            @(user.Name ?? user.Email)
+                        </a>
                     }
                     else
                     {
@@ -65,7 +68,7 @@
                         <a asp-action="FavoriteProducts" asp-controller="User">Бажане</a>
                     </div>
                     <div class="drop-item">
-                        <a asp-area="Identity" asp-page="/Account/Manage/Index">Налаштування</a>
+                        <a asp-controller="User" asp-action="Settings">Налаштування</a>
                     </div>
                     <hr/>
                     <div class="drop-end">

@@ -25,4 +25,6 @@ public class User : IdentityUser
 
     [Range(0, double.MaxValue)]
     public double Balance { get; set; } = 0;
+    
+    public string? ProfilePictureUrl { get; set; }
 }

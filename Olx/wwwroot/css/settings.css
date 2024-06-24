@@ -1,0 +1,218 @@
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    background-color: var(--white-color);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-around;
+    padding-top: 5em;
+    padding-bottom: 5em;
+}
+
+.title {
+    font-size: 3em;
+    font-weight: 700;
+    color: var(--black-color);
+    margin-bottom: 1em;
+}
+
+#settingsForm {
+    padding-top: 5em;
+    border-top: 2px solid var(--light-color);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 80%;
+    gap: 3em;
+}
+
+.settings {
+    display: flex;
+    justify-content: space-between;
+    gap: 4em;
+}
+
+.settings-column {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 35%;
+}
+
+.profile-picture-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.profile-picture-input {
+    display: none;
+}
+
+.profile-picture {
+    height: 100%;
+    max-width: 200px;
+    border-radius: 5%;
+    object-fit: cover;
+    margin-bottom: 1em;
+    margin-right: 1em;
+    cursor: pointer;
+}
+
+.profile-picture-container .description {
+    font-size: 1.2em;
+    color: var(--muted-color);
+    margin-bottom: 1em;
+}
+
+.profile-picture-container .description h4 {
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.profile-picture-container .description p {
+    font-size: .9em;
+}
+
+.input-container {
+    display: flex;
+    margin-bottom: 1em;
+    justify-content: space-between;
+}
+
+.vertical-separator {
+    width: 2px;
+    background-color: var(--light-color);
+}
+
+.icon {
+    background-color: var(--muted-color);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10%;
+}
+
+.settings-input {
+    width: 80%;
+    padding: 0.5em;
+    border: 1px solid var(--light-color);
+    border-radius: 5px;
+    font-size: 1.2em;
+}
+
+.save-button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 4em;
+}
+
+.save-button-container > * {
+    width: 35%;
+}
+
+.save-button {
+    background-color: var(--green-color);
+    color: var(--white-color);
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    border: none;
+    outline: none;
+}
+
+.save-button:hover {
+    background-color: var(--green-accent-color);
+}
+
+.light-gray-panel {
+    background-color: var(--light-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4em;
+}
+
+.rating-container {
+    display: flex;
+    gap: 1em;
+    background-color: var(--white-color);
+    padding: 2em;
+    border-radius: 5px;
+}
+
+.rating-part {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 1em;
+}
+
+.rating-part:first-child {
+    flex-direction: row;
+    gap: 1.5em;
+}
+
+.rating-icon + div {
+    display: flex;
+    flex-direction: column;
+}
+
+.rating-name {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: var(--black-color);
+    margin-bottom: 0.5em;
+}
+
+.rating-about {
+    font-size: 1em;
+    color: var(--black-color);
+}
+
+.rating-value {
+    font-size: 1.5em;
+    color: var(--black-color);
+}
+
+.rating-value span {
+    font-size: 2em;
+    font-weight: 700;
+}
+
+.delete-account-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 4em;
+    background-color: var(--white-color);
+    padding: 2em 6em;
+}
+
+.separator {
+    height: 2px;
+    width: 35%;
+    background-color: var(--light-color);
+}
+
+#deleteAccount {
+    color: var(--white-color);
+    background-color: var(--red-color);
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    font-size: 1.2em;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+#deleteAccount:hover {
+    background-color: var(--red-accent-color);
+}
