@@ -6,20 +6,21 @@ using Microsoft.EntityFrameworkCore;
 using Olx.Data;
 using Olx.Models;
 using Olx.Services.Abstract;
+using Olx.ViewModels;
 
 namespace Olx.Controllers;
 
 [Authorize]
 public class UserController : Controller
 {
-    private readonly ShopDbContext _dbContext;
+    private readonly ShopDbContext _context;
     private readonly IPhotoManager _photoManager;
     private readonly UserManager<User> _userManager;
     private readonly SignInManager<User> _signInManager;
 
-    public UserController(ShopDbContext dbContext, IPhotoManager photoManager, UserManager<User> userManager, SignInManager<User> signInManager)
+    public UserController(ShopDbContext context, IPhotoManager photoManager, UserManager<User> userManager, SignInManager<User> signInManager)
     {
-        _dbContext = dbContext;
+        _context = context;
         _photoManager = photoManager;
         _userManager = userManager;
         _signInManager = signInManager;
@@ -27,14 +28,14 @@ public class UserController : Controller
 
     public IActionResult FavoriteProducts()
     {
-        var products = _dbContext.Products.Include(p => p.FavoredBy);
+        var products = _context.Products.Include(p => p.FavoredBy);
         var favoriteProducts = products.Where(p => p.FavoredBy!.Any(u => u.UserName == User.Identity!.Name));
         return View(favoriteProducts);
     }
 
     public IActionResult Settings()
     {
-        var user = _dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name);
+        var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name);
         return View(user);
     }
 
@@ -42,7 +43,7 @@ public class UserController : Controller
     public async Task<IActionResult> Settings(User user, IFormFile? profilePicture, string? currentPassword,
         string? newPassword, string? confirmPassword)
     {
-        var loggedIdUser = _dbContext.Users.FirstOrDefault(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var loggedIdUser = _context.Users.FirstOrDefault(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
         if (loggedIdUser is null || loggedIdUser.Email != user.Email)
         {
             return Unauthorized();
@@ -53,7 +54,12 @@ public class UserController : Controller
         loggedIdUser.PhoneNumber = user.PhoneNumber;
         if (profilePicture is not null)
         {
+            var oldUrl = loggedIdUser.ProfilePictureUrl;
             loggedIdUser.ProfilePictureUrl = await _photoManager.SavePhotoAsync(profilePicture);
+            if (oldUrl is not null)
+            {
+                await _photoManager.DeletePhotoAsync(oldUrl);
+            }
         }
 
         if (newPassword is not null && confirmPassword is not null)
@@ -75,31 +81,31 @@ public class UserController : Controller
             }
         }
 
-        await _dbContext.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return RedirectToAction("Settings");
     }
 
     public async Task<IActionResult> Delete()
     {
-        var user = _dbContext.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name);
+        var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name);
         if (user is null)
         {
             return Unauthorized();
         }
 
-        var ordersToDelete = _dbContext.Orders
+        var ordersToDelete = _context.Orders
             .Include(o => o.Product)
             .Where(o => o.BuyerId == user.Id || o.Product.OwnerId == user.Id);
-        var messagesToDelete = _dbContext.Messages.Where(m => m.SenderId == user.Id || m.ReceiverId == user.Id);
-        var filterValuesToDelete = _dbContext.FilterValues
+        var messagesToDelete = _context.Messages.Where(m => m.SenderId == user.Id || m.ReceiverId == user.Id);
+        var filterValuesToDelete = _context.FilterValues
             .Include(fv => fv.Product)
             .Where(fv => fv.Product.OwnerId == user.Id);
-        var productsToDelete = _dbContext.Products.Where(p => p.OwnerId == user.Id);
-        _dbContext.Orders.RemoveRange(ordersToDelete);
-        _dbContext.Messages.RemoveRange(messagesToDelete);
-        _dbContext.FilterValues.RemoveRange(filterValuesToDelete);
-        _dbContext.Products.RemoveRange(productsToDelete);
-        await _dbContext.SaveChangesAsync();
+        var productsToDelete = _context.Products.Where(p => p.OwnerId == user.Id);
+        _context.Orders.RemoveRange(ordersToDelete);
+        _context.Messages.RemoveRange(messagesToDelete);
+        _context.FilterValues.RemoveRange(filterValuesToDelete);
+        _context.Products.RemoveRange(productsToDelete);
+        await _context.SaveChangesAsync();
         var result = await _userManager.DeleteAsync(user);
         if (result.Succeeded)
         {
@@ -107,5 +113,24 @@ public class UserController : Controller
         }
 
         return RedirectToAction("Index", "Home");
+    }
+
+    public IActionResult Profile()
+    {
+        var user = _context.Users.FirstOrDefault(u => u.UserName == User.Identity!.Name);
+        var vm = new ProfileViewModel
+        {
+            User = user,
+            ActivePublications =
+                _context.Products.Count(p => p.OwnerId == user!.Id && p.PublicationState == PublicationState.Active),
+            HiddenPublications =
+                _context.Products.Count(p => p.OwnerId == user.Id && p.PublicationState == PublicationState.Hidden),
+            ArchivedPublications =
+                _context.Products.Count(p => p.OwnerId == user.Id && p.PublicationState == PublicationState.Archived),
+            RejectedPublications = _context.Products.Count(p => p.OwnerId == user.Id && p.RejectedAt != null && p.RejectedAt < p.UpdatedAt),
+            Sells = _context.Orders.Count(o => o.Product.OwnerId == user.Id),
+            Purchases = _context.Orders.Count(o => o.BuyerId == user.Id)
+        };
+        return View(vm);
     }
 }

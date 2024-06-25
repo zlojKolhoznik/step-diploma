@@ -1,0 +1,141 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model Olx.ViewModels.ProfileViewModel
+
+@{
+    ViewBag.Title = $"Профіль {Model.User.Name ?? ""}";
+    Layout = "_Layout";
+}
+
+<partial name="_SearchBar" model="@null"/>
+
+<div class="links col-12 d-flex gap-2 flex-row-reverse align-items-center justify-content-end">
+    <span>Профіль</span>
+    <img src="~/assets/icons/arrow.svg"/>
+    <a asp-controller="Home" asp-action="Index">Головна</a>
+</div>
+<div class="d-flex justify-content-between py-5" style="padding-left: 10%; padding-right: 10%; background-color: var(--white-color)">
+    <div class="balance-info">
+        Мій баланс: <span>@Model.User.Balance грн</span>
+    </div>
+    <a href="/" class="action-button">Поповнити гаманець</a>
+</div>
+
+<div class="profile-main">
+
+
+    <div class="profile-header">
+        <div class="puzzle" style="background-image: url('/@(Model.User.ProfilePictureUrl?.Replace("\\", "/") ?? "assets/icons/default-profile-picture.png")')">
+            <div class="red-circle"></div>
+            <div class="green-circle"></div>
+            <div class="profile-picture"></div>
+        </div>
+        <div class="profile-info">
+            <div class="user-name">@Model.User.Name</div>
+            <div class="d-flex flex-column">
+                <div class="profile-main-text">@Model.User.Email</div>
+                <div class="profile-main-text">@Model.User.PhoneNumber</div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <div class="profile-main-text">ID: @Model.User.Id</div>
+                <div class="profile-main-text">На BUYSELL з @Model.User.RegistrationDate.Year р.</div>
+            </div>
+            <a asp-action="Settings">
+                <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M27.0891 1.28264C26.6986 0.892115 26.0654 0.892115 25.6749 1.28264L21.9534 5.00419C21.9428 5.01392 21.9323 5.0239 21.9221 5.03412L1.28215 25.6741C1.09461 25.8616 0.989258 26.116 0.989258 26.3812V32.0103C0.989258 32.5626 1.43697 33.0103 1.98926 33.0103H7.61834C7.88355 33.0103 8.13791 32.9049 8.32544 32.7174L28.9339 12.1089C28.9446 12.0991 28.9551 12.089 28.9655 12.0787L32.7182 8.32593C32.9058 8.1384 33.0111 7.88404 33.0111 7.61883C33.0111 7.35361 32.9058 7.09926 32.7182 6.91172L27.0891 1.28264ZM22.6286 7.15602L26.8435 11.3709L7.20412 31.0103H2.98926V26.7954L22.6286 7.15602ZM28.259 9.95676L30.5969 7.61883L26.382 3.40396L24.0441 5.74189L28.259 9.95676Z" fill="#F8F8F8"/>
+                </svg>
+            </a>
+        </div>
+    </div>
+    
+    <div class="d-flex justify-content-between" style="width: 80%">
+        <div class="profile-links">
+            <h3 class="green">Мої оголошення</h3>
+            <a asp-controller="Publications" asp-action="Sells" asp-route-state="Active" class="profile-link">
+                <span>Активні</span>
+                <span class="green">@Model.ActivePublications</span>
+            </a>
+            <a asp-controller="Publications" asp-action="Sells" asp-route-state="Hidden" class="profile-link">
+                <span>Приховані</span>
+                <span class="green">@Model.HiddenPublications</span>
+            </a>
+            <a asp-controller="Publications" asp-action="Sells" asp-route-state="Archived" class="profile-link">
+                <span>У кошику</span>
+                <span class="green">@Model.ArchivedPublications</span>
+            </a>
+            <a asp-controller="Publications" asp-action="Sells" asp-route-rejected="true" class="profile-link">
+                <span>Відхилені</span>
+                <span class="green">@Model.RejectedPublications</span>
+            </a>
+        </div>
+        <div class="profile-links">
+            <h3 class="dark-gray">BUYSELL доставка</h3>
+            <a asp-action="Sells" asp-controller="Publications" asp-route-showOrders="true" class="profile-link">
+                <span>Замовлення</span>
+                <span class="dark-gray">@Model.Sells</span>
+            </a>
+            <a asp-action="Purchases" asp-controller="Publications" class="profile-link">
+                <span>Покупки</span>
+                <span class="dark-gray">@Model.Purchases</span>
+            </a>
+            <a href="/" class="profile-link">
+                <span>Способи доставки</span>
+                <span class="dark-gray">&GT;</span>
+            </a>
+            <a href="/" class="profile-link">
+                <span>Способи оплати</span>
+                <span class="dark-gray">&GT;</span>
+            </a>
+        </div>
+        <div class="profile-links">
+            <h3 class="red">Платежі</h3>
+            <a href="/" class="profile-link">
+                <span>Гаманець</span>
+                <span class="red">&GT;</span>
+            </a>
+            <a href="/" class="profile-link">
+                <span>Мій пакет</span>
+                <span class="red">&GT;</span>
+            </a>
+            <a href="/" class="profile-link">
+                <span>Історія платежів</span>
+                <span class="red">&GT;</span>
+            </a>
+            <a href="/" class="profile-link">
+                <span>Історія надходжень</span>
+                <span class="red">&GT;</span>
+            </a>
+        </div>
+    </div>
+    
+    <div class="rating-container">
+        <div class="rating-part">
+            <div class="rating-icon">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="80" height="80" rx="8" fill="#19A896"/>
+                    <path d="M20 45C20 47.6264 20.5173 50.2272 21.5224 52.6537C22.5275 55.0802 24.0007 57.285 25.8579 59.1421C27.715 60.9993 29.9198 62.4725 32.3463 63.4776C34.7728 64.4827 37.3736 65 40 65C42.6264 65 45.2272 64.4827 47.6537 63.4776C50.0802 62.4725 52.285 60.9993 54.1421 59.1421C55.9993 57.285 57.4725 55.0802 58.4776 52.6537C59.4827 50.2272 60 47.6264 60 45H40L20 45Z" fill="#F8F8F8"/>
+                    <circle cx="20" cy="25" r="10" fill="#F8F8F8"/>
+                    <circle cx="60" cy="25" r="10" fill="#F8F8F8"/>
+                </svg>
+            </div>
+            <div>
+                <div class="rating-name">Відмінно:</div>
+                <div class="rating-about">Ви отримало багато виключно схвальних відгуків покупців</div>
+            </div>
+        </div>
+        <div class="vertical-separator"></div>
+        <div class="rating-part">
+            <div class="rating-value"><span>9.8</span>/10</div>
+        </div>
+        <div class="vertical-separator"></div>
+        <div class="rating-part">
+            <div class="rating-about">Тільки-но покупець контактує з вами — він може залишити вам оцінку.</div>
+            <div class="rating-about">Існує 4 типи рейтингу: Відмінно, Добре, Задовільно й Погано.</div>
+        </div>
+    </div>
+</div>
+
+<div style="background-color: var(--white-color); height: 50px; width: 100%; display: flex"></div>
+
+@section Styles {
+    <link rel="stylesheet" href="/css/profile.css"/>
+}

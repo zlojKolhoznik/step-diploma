@@ -13,6 +13,8 @@ public class User : IdentityUser
     public EnterpriseUser? EnterpriseUser { get; set; }
     
     public List<Message> Messages { get; set; }
+
+    public DateOnly RegistrationDate { get; set; } = DateOnly.FromDateTime(DateTime.Now);
     
     [ValidateNever]
     public List<Product>? Favorites { get; set; }

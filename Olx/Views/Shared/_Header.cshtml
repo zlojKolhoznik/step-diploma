@@ -40,7 +40,7 @@
                     @if (SignInManager.IsSignedIn(User) && user is not null)
                     {
                         <a asp-area="Identity" asp-page="/Account/Manage/Index">
-                            <img src="/@(user.ProfilePictureUrl ?? "assets/icons/person.svg")" alt="profile-picture" class="profile-picture-header"/>
+                            <img src="/@(user.ProfilePictureUrl ?? "assets/icons/default-profile-picture.png")" alt="profile-picture" class="profile-picture-header"/>
                             @(user.Name ?? user.Email)
                         </a>
                     }
@@ -52,6 +52,9 @@
                 @if (SignInManager.IsSignedIn(User) && user is not null)
                 {
                     <hr/>
+                    <div class="drop-item">
+                        <a asp-action="Profile" asp-controller="User">Профіль (new)</a>
+                    </div>
                     <div class="drop-item">
                         <a asp-action="Sells" asp-controller="Publications">Оголошення</a>
                     </div>
@@ -105,4 +108,5 @@
         </a>
     </div>
 </div>
+
 

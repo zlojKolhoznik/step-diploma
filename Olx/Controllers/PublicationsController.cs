@@ -19,13 +19,31 @@ public class PublicationsController : Controller
     }
 
     [Route("/publications/{state=active}")]
-    public IActionResult Sells(string state, string? orderBy = "Relevance", bool showOrders = false)
+    public IActionResult Sells(string state, bool rejected = false, string? orderBy = "Relevance", bool showOrders = false)
     {
         var user = _context.Users.FirstOrDefault(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier));
 
         if (user is null)
         {
             return Forbid();
+        }
+
+        if (rejected)
+        {
+            var rejectedProducts = _context.Products
+                .Where(p => p.OwnerId == User.FindFirstValue(ClaimTypes.NameIdentifier) && p.RejectedAt != null && p.RejectedAt < p.UpdatedAt);
+            return View(new SellsViewModel
+            {
+                Products = rejectedProducts.ToList(),
+                State = PublicationState.Active,
+                Balance = _context.Users.FirstOrDefault(u => u.Id == User.FindFirstValue(ClaimTypes.NameIdentifier))!.Balance,
+                OrdersCount = _context.Orders.Count(o => o.Product.OwnerId == user.Id),
+                ActiveCount = _context.Products.Count(p => p.PublicationState == PublicationState.Active && p.OwnerId == user.Id),
+                ArchivedCount = _context.Products.Count(p => p.PublicationState == PublicationState.Archived && p.OwnerId == user.Id),
+                HiddenCount = _context.Products.Count(p => p.PublicationState == PublicationState.Hidden && p.OwnerId == user.Id),
+                RejectedCount = rejectedProducts.Count(),
+                Rejected = true
+            });
         }
         
         if (showOrders)

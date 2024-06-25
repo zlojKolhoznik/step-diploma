@@ -19,7 +19,10 @@
 <div class="links col-12 d-flex gap-2 flex-row-reverse align-items-center justify-content-end">
     @switch (Model.State)
     {
-        case PublicationState.Active:
+        case PublicationState.Active when Context.Request.Query["showOrders"] == "true":
+            <span>Замовлення</span>
+            break;
+        case PublicationState.Active when !Model.Rejected:
             <span>Активні оголошення</span>
             break;
         case PublicationState.Archived:
@@ -29,7 +32,7 @@
             <span>Приховані оголошення</span>
             break;
         default:
-            <span>Оголошення</span>
+            <span>Відхилені оголошення</span>
             break;
     }
     <img src="~/assets/icons/arrow.svg"/>
@@ -51,31 +54,40 @@
             <a asp-action="Sells" asp-route-state="@PublicationState.Hidden.ToString()" class="state-name">У Приховані (@Model.HiddenCount)</a>
             <a asp-action="Sells" asp-route-state="@PublicationState.Archived.ToString()" class="state-name">У кошику (@Model.ArchivedCount)</a>
             <span class="state-name">Замовлення (@Model.OrdersCount)</span>
+            <a asp-action="Sells" asp-route-rejected="true" class="state-name">Відхилені (@Model.RejectedCount)</a>
         }
         else
         {
             switch (Model.State)
             {
-                case PublicationState.Active:
+                case PublicationState.Active when !Model.Rejected:
                     <span class="state-name">Активні (@Model.ActiveCount)</span>
                     <a asp-action="Sells" asp-route-state="@PublicationState.Hidden.ToString()" class="state-name">Приховані (@Model.HiddenCount)</a>
                     <a asp-action="Sells" asp-route-state="@PublicationState.Archived.ToString()" class="state-name">У кошику (@Model.ArchivedCount)</a>
                     <a asp-action="Sells" asp-route-showOrders="true" class="state-name">Замовлення (@Model.OrdersCount)</a>
+                    <a asp-action="Sells" asp-route-rejected="true" class="state-name">Відхилені (@Model.RejectedCount)</a>
                     break;
                 case PublicationState.Hidden:
                     <a asp-action="Sells" asp-route-state="@PublicationState.Active.ToString()" class="state-name">Активні (@Model.ActiveCount)</a>
                     <span class="state-name">Приховані (@Model.HiddenCount)</span>
                     <a asp-action="Sells" asp-route-state="@PublicationState.Archived.ToString()" class="state-name">У кошику (@Model.ArchivedCount)</a>
                     <a asp-action="Sells" asp-route-showOrders="true" class="state-name">Замовлення (@Model.OrdersCount)</a>
+                    <a asp-action="Sells" asp-route-rejected="true" class="state-name">Відхилені (@Model.RejectedCount)</a>
                     break;
                 case PublicationState.Archived:
                     <a asp-action="Sells" asp-route-state="@PublicationState.Active.ToString()" class="state-name">Активні (@Model.ActiveCount)</a>
                     <a asp-action="Sells" asp-route-state="@PublicationState.Hidden.ToString()" class="state-name">У Приховані (@Model.HiddenCount)</a>
                     <span class="state-name">У кошику (@Model.ArchivedCount)</span>
                     <a asp-action="Sells" asp-route-showOrders="true" class="state-name">Замовлення (@Model.OrdersCount)</a>
+                    <a asp-action="Sells" asp-route-rejected="true" class="state-name">Відхилені (@Model.RejectedCount)</a>
                     break;
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    <a asp-action="Sells" asp-route-state="@PublicationState.Active.ToString()" class="state-name">Активні (@Model.ActiveCount)</a>
+                    <a asp-action="Sells" asp-route-state="@PublicationState.Hidden.ToString()" class="state-name">У Приховані (@Model.HiddenCount)</a>
+                    <a asp-action="Sells" asp-route-state="@PublicationState.Archived.ToString()" class="state-name">У кошику (@Model.ArchivedCount)</a>
+                    <a asp-action="Sells" asp-route-showOrders="true" class="state-name">Замовлення (@Model.OrdersCount)</a>
+                    <span class="state-name">Відхилені (@Model.RejectedCount)</span>
+                    break;
             }
         }
         <select name="orderBy" class="order-by">

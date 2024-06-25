@@ -13,4 +13,8 @@ public class SellsViewModel
     public int ArchivedCount { get; set; }
     public int HiddenCount { get; set; }
     public int OrdersCount { get; set; }
+
+    public int RejectedCount { get; set; }
+
+    public bool Rejected { get; set; }
 }

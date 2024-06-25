@@ -25,6 +25,9 @@
         let password = $('input[name=currentPassword]').val();
         let newPassword = $('input[name=newPassword]').val();
         let confirmPassword = $('input[name=confirmPassword]').val();
+        if (!password && !newPassword && !confirmPassword) {
+            return;
+        }
         if (password === newPassword) {
             alert('Новий пароль не може співпадати з поточним паролем');
             e.preventDefault();  
